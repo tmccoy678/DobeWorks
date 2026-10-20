@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -12,6 +13,7 @@ import sys
 import tempfile
 import time
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
 from unittest import mock
 
@@ -108,6 +110,84 @@ class WorkerCoreTests(unittest.TestCase):
         value = load(self.envelope)
         value.update(updates)
         write_json(self.envelope, value)
+
+    @contextmanager
+    def racing_input_open(self, change):
+        original_io, original_os, changed = io.open, os.open, []
+
+        def before_open(path):
+            if not isinstance(path, int) and Path(path).name == self.input_file.name and not changed:
+                changed.append(True)
+                change()
+
+        def open_io(path, *args, **kwargs):
+            before_open(path)
+            return original_io(path, *args, **kwargs)
+
+        def open_os(path, *args, **kwargs):
+            before_open(path)
+            return original_os(path, *args, **kwargs)
+
+        with mock.patch("io.open", side_effect=open_io), mock.patch("os.open", side_effect=open_os):
+            yield changed
+
+    def expect_input_bytes(self, raw: bytes) -> None:
+        digest = hashlib.sha256(raw).hexdigest()
+        expected = load(FIXTURES / "expected-result.json")
+        expected["input_sha256"] = digest
+        records = json.loads(raw)["records"]
+        expected["total_bytes"] = sum(record["bytes"] for record in records)
+        encoded = (json.dumps(expected, indent=2, sort_keys=True) + "\n").encode()
+        self.mutate_envelope(input_sha256=digest, expected_output_sha256=hashlib.sha256(encoded).hexdigest())
+
+    def test_growth_between_check_and_open_is_bounded(self) -> None:
+        original = self.input_file.read_bytes()
+        enlarged = original + b" " * (131073 - len(original))
+        self.expect_input_bytes(enlarged)
+        with self.racing_input_open(lambda: self.input_file.write_bytes(enlarged)) as changed:
+            result = self.execute()
+        self.assertTrue(changed)
+        self.assertEqual(result["state"], "REJECTED_INPUT_LIMIT")
+
+    def test_swap_to_external_symlink_at_open_is_rejected(self) -> None:
+        outside = self.root / "outside-input.json"
+        shutil.copyfile(self.input_file, outside)
+
+        def replace_input():
+            self.input_file.unlink()
+            self.input_file.symlink_to(outside)
+
+        with self.racing_input_open(replace_input) as changed:
+            result = self.execute()
+        self.assertTrue(changed)
+        self.assertEqual(result["state"], "REJECTED_PATH")
+
+    def test_parent_swap_cannot_redirect_an_open_directory(self) -> None:
+        nested, outside = self.inputs / "nested", self.root / "outside"
+        nested.mkdir()
+        outside.mkdir()
+        source = self.input_file
+        self.input_file = nested / source.name
+        shutil.copyfile(source, self.input_file)
+        value = load(source)
+        value["records"][0]["bytes"] += 1
+        write_json(outside / source.name, value)
+        self.expect_input_bytes((outside / source.name).read_bytes())
+
+        def replace_parent():
+            nested.rename(self.inputs / "saved")
+            nested.symlink_to(outside, target_is_directory=True)
+
+        with self.racing_input_open(replace_parent) as changed:
+            result = self.execute()
+        self.assertTrue(changed)
+        self.assertEqual(result["state"], "REJECTED_INPUT_IDENTITY")
+
+    def test_symlinked_input_ancestor_is_rejected(self) -> None:
+        linked = self.inputs / "linked-directory"
+        linked.symlink_to(self.inputs, target_is_directory=True)
+        result = self.core().execute(self.envelope, linked / self.input_file.name, self.staging, NOW)
+        self.assertEqual(result["state"], "REJECTED_PATH")
 
     def test_valid_fixture_is_atomic_completed_unaccepted(self) -> None:
         result = self.execute()
@@ -270,6 +350,33 @@ class WorkerCoreTests(unittest.TestCase):
         self.assertEqual(result["state"], "FAILED_OUTPUT_VALIDATION")
         self.assertEqual(result["promotion"], "NOT_PERFORMED")
 
+    def test_output_depth_is_explicit_even_when_encoder_accepts_it(self) -> None:
+        payload = []
+        for _ in range(101):
+            payload = [payload]
+        result = self.execute(self.core(runner=CountingRunner(result=payload)))
+        self.assertEqual(result["state"], "FAILED_OUTPUT_VALIDATION")
+        partial = self.staging / ".partial-job-phase4-fixture-001" / "result.json"
+        self.assertEqual(partial.read_bytes(), b'{"unserializable_candidate":true}\n')
+
+    def test_failed_serialization_placeholder_cannot_be_handed_back(self) -> None:
+        import worker_core
+
+        candidate = load(FIXTURES / "expected-result.json")
+        placeholder = b'{"unserializable_candidate":true}\n'
+        self.mutate_envelope(expected_output_sha256=hashlib.sha256(placeholder).hexdigest())
+        original = worker_core._encoded
+
+        def fail_candidate(value):
+            if value is candidate:
+                raise ValueError("synthetic encoding failure")
+            return original(value)
+
+        with mock.patch("worker_core._encoded", side_effect=fail_candidate):
+            result = self.execute(self.core(runner=CountingRunner(result=candidate)))
+        self.assertEqual(result["state"], "FAILED_OUTPUT_VALIDATION")
+        self.assertFalse((self.staging / result["job_id"]).exists())
+
     def test_deep_json_envelope_is_rejected_without_traceback(self) -> None:
         self.envelope.write_text("[" * 1500 + "]" * 1500 + "\n", encoding="utf-8")
         result = self.execute()
@@ -347,6 +454,21 @@ class WorkerCoreTests(unittest.TestCase):
         self.assertEqual(result["state"], "AMBIGUOUS_CANCELLATION_RACE")
         self.assertTrue((partial / "result.json").is_file())
         self.assertFalse((self.staging / result["job_id"]).exists())
+
+    def test_cancellation_candidate_preservation_has_the_envelope_deadline(self) -> None:
+        class SlowCandidate(dict):
+            def items(self):
+                time.sleep(2)
+                return super().items()
+
+        self.mutate_envelope(timeout_seconds=1)
+        runner = CountingRunner(error=WorkerCancellationRace(SlowCandidate({"candidate": "partial"})))
+        started = time.monotonic()
+        result = self.execute(self.core(runner=runner))
+        self.assertEqual(result["state"], "FAILED_TIMEOUT")
+        self.assertLess(time.monotonic() - started, 1.8)
+        failure = self.staging / ".partial-job-phase4-fixture-001" / "failure.json"
+        self.assertEqual(load(failure)["state"], "FAILED_TIMEOUT")
 
     def test_network_unavailable_does_not_substitute_a_source(self) -> None:
         runner = CountingRunner(error=WorkerNetworkUnavailable("synthetic offline"))

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import selectors
@@ -17,6 +18,7 @@ from pathlib import Path
 
 
 MAX_TEXT_BYTES = 4 * 1024 * 1024
+MAX_EXTERNAL_JSON_DEPTH = 64
 GIT_TIMEOUT_SECONDS = 2
 DEGS_TIMEOUT_SECONDS = 5
 GENERATION_1_COMMIT = "f45ae80c64a0aa8c723a5a58b4fbc7073682d349"
@@ -163,6 +165,42 @@ class ValidationError(Exception):
         super().__init__(message)
         self.path = path
         self.rule_id = rule_id
+
+
+def parse_external_json(raw: bytes, message: str) -> object:
+    """Decode one unambiguous, finite, bounded-depth UTF-8 result."""
+    def unique_object(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("duplicate JSON key")
+            value[key] = item
+        return value
+
+    def reject_constant(token):
+        raise ValueError("nonfinite JSON constant")
+
+    try:
+        if not isinstance(raw, bytes):
+            raise ValueError("external result must be UTF-8 bytes")
+        payload = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
+        )
+        pending = [(payload, 0)]
+        while pending:
+            value, depth = pending.pop()
+            if depth > MAX_EXTERNAL_JSON_DEPTH:
+                raise ValueError("external JSON nesting exceeds limit")
+            if isinstance(value, float) and not math.isfinite(value):
+                raise ValueError("nonfinite JSON number")
+            if isinstance(value, (dict, list)):
+                children = value.values() if isinstance(value, dict) else value
+                pending.extend((item, depth + 1) for item in children)
+        return payload
+    except (UnicodeError, ValueError, RecursionError) as error:
+        raise ValidationError(message) from error
 
 
 class Phase2ArgumentParser(argparse.ArgumentParser):
@@ -604,10 +642,9 @@ def verify_degs_result(
 ) -> None:
     if result.stderr or result.returncode != 0:
         raise ValidationError(f"Generation 2 DEGS {action} is not silent PASS")
-    try:
-        payload = json.loads(result.stdout)
-    except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValidationError(f"Generation 2 DEGS {action} output is invalid") from error
+    payload = parse_external_json(
+        result.stdout, f"Generation 2 DEGS {action} output is invalid"
+    )
     expected_fields = {
         "applicable_rule_ids",
         "authority_lane",

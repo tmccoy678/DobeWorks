@@ -63,7 +63,7 @@ python3 -B -m unittest discover \
 python3 -B -m unittest discover -s benchmarks -p 'test_*.py' -v
 ```
 
-The current suite contains 70 Worker/Observer tests and six benchmark tests. The benchmark exercises 318 public JSON inputs plus two native controls. These results cover the included synthetic behaviors; they do not prove security, correctness, device support, or production readiness.
+The current suite contains 84 Worker/Observer tests and seven benchmark tests. The [current Observer benchmark](benchmarks/results/apple-silicon-v3.json) records passing outcomes for 318 public JSON inputs and two native controls. The [boundary-fix and verification record](docs/reviews/2026-10-20-boundary-fixes.md) gives the correction scope, commands, and test evidence. These results cover the included synthetic behaviors; they do not prove security, correctness, device support, or production readiness.
 
 Historical package-validator tests are separate. They use pinned Git history, and the Phase 4 set also needs the original external specification through `DOBEWORKS_PHASE4_SPEC`. A normal source archive does not contain that historical artifact. See [historical package tests](docs/historical-package-tests.md).
 
@@ -75,6 +75,6 @@ Historical package-validator tests are separate. They use pinned Git history, an
 - [Citations and source credit](CITATIONS.md)
 - [Companion DEGS repository](https://github.com/tmccoy678/DEGS-v2.1)
 
-This is a development snapshot without a versioned release or universal platform-support claim. It was recorded on Apple silicon with macOS 26.6.2 and Python 3.9.6; the standard-library examples are intended to be portable, while other environments remain unverified.
+This is a development snapshot without a versioned release or universal platform-support claim. Current tests were verified on arm64 macOS 27.0.1 with Python 3.9.6 and 3.14.7; the recorded v3 benchmark uses Python 3.14.7. Earlier results retain their historical source identities and environments. Other environments remain unverified.
 
 Except for material identified in [third-party notices](THIRD_PARTY_NOTICES.md) and under its own license, this repository is available under the [Apache License 2.0](LICENSE). Use [issues](https://github.com/tmccoy678/DobeWorks-v2.1/issues) for non-sensitive questions and [SECURITY.md](SECURITY.md) for vulnerability reporting.

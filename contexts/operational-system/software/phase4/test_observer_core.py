@@ -3,13 +3,17 @@
 
 from __future__ import annotations
 
+import io
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
+from unittest import mock
 
 from observer_core import ObserverCore, ObserverRejected
 
@@ -51,6 +55,146 @@ class ObserverCoreTests(unittest.TestCase):
         value = load(self.snapshot)
         value.update(updates)
         write_json(self.snapshot, value)
+
+    @contextmanager
+    def racing_snapshot_open(self, change):
+        original_io, original_os, changed = io.open, os.open, []
+
+        def before_open(path):
+            if not isinstance(path, int) and Path(path).name == self.snapshot.name and not changed:
+                changed.append(True)
+                change()
+
+        def open_io(path, *args, **kwargs):
+            before_open(path)
+            return original_io(path, *args, **kwargs)
+
+        def open_os(path, *args, **kwargs):
+            before_open(path)
+            return original_os(path, *args, **kwargs)
+
+        with mock.patch("io.open", side_effect=open_io), mock.patch("os.open", side_effect=open_os):
+            yield changed
+
+    def test_growth_between_check_and_open_is_bounded(self) -> None:
+        original = self.snapshot.read_bytes()
+        enlarged = original + b" " * (131073 - len(original))
+        with self.racing_snapshot_open(lambda: self.snapshot.write_bytes(enlarged)) as changed:
+            with self.assertRaisesRegex(ObserverRejected, "INPUT_LIMIT"):
+                self.collect()
+        self.assertTrue(changed)
+
+    def test_swap_to_external_symlink_at_open_is_rejected(self) -> None:
+        outside = self.root / "outside-snapshot.json"
+        shutil.copyfile(self.snapshot, outside)
+
+        def replace_snapshot():
+            self.snapshot.unlink()
+            self.snapshot.symlink_to(outside)
+
+        with self.racing_snapshot_open(replace_snapshot) as changed:
+            with self.assertRaisesRegex(ObserverRejected, "PATH_REJECTED"):
+                self.collect()
+        self.assertTrue(changed)
+
+    def test_parent_swap_cannot_redirect_an_open_directory(self) -> None:
+        nested, outside = self.inputs / "nested", self.root / "outside"
+        nested.mkdir()
+        outside.mkdir()
+        source = self.snapshot
+        self.snapshot = nested / source.name
+        shutil.copyfile(source, self.snapshot)
+        value = load(source)
+        value["role_id"] = "WK-CANDIDATE-02"
+        write_json(outside / source.name, value)
+
+        def replace_parent():
+            nested.rename(self.inputs / "saved")
+            nested.symlink_to(outside, target_is_directory=True)
+
+        with self.racing_snapshot_open(replace_parent) as changed:
+            record = self.collect()
+        self.assertTrue(changed)
+        self.assertEqual(record["role_id"], "WK-CANDIDATE-01")
+
+    def test_symlinked_input_ancestor_is_rejected(self) -> None:
+        linked = self.inputs / "linked-directory"
+        linked.symlink_to(self.inputs, target_is_directory=True)
+        with self.assertRaisesRegex(ObserverRejected, "PATH_REJECTED"):
+            self.core().collect(linked / self.snapshot.name, self.policy, NOW)
+
+    def test_input_descriptors_close_on_success_and_rejection(self) -> None:
+        original_open, original_close, active, observed = os.open, os.close, set(), []
+
+        def track_open(*args, **kwargs):
+            descriptor = original_open(*args, **kwargs)
+            active.add(descriptor)
+            observed.append(descriptor)
+            return descriptor
+
+        def track_close(descriptor):
+            original_close(descriptor)
+            active.remove(descriptor)
+
+        with mock.patch("os.open", side_effect=track_open), mock.patch("os.close", side_effect=track_close):
+            self.collect()
+            self.assertEqual(active, set())
+            with self.assertRaisesRegex(ObserverRejected, "INPUT_LIMIT"):
+                self.core(max_input_bytes=1).collect(self.snapshot, self.policy, NOW)
+            self.assertEqual(active, set())
+            with mock.patch("bounded_input.os.fdopen", side_effect=OSError("synthetic read failure")):
+                with self.assertRaisesRegex(ObserverRejected, "PATH_REJECTED"):
+                    self.collect()
+            self.assertEqual(active, set())
+        self.assertTrue(observed)
+
+    def test_short_reads_do_not_hide_trailing_malformed_input(self) -> None:
+        valid = self.snapshot.read_bytes()
+        self.snapshot.write_bytes(valid + b" invalid trailing data")
+        original = os.fdopen
+
+        class ShortReader:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def read(self, size):
+                return self.stream.read(min(size, len(valid)))
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+        with mock.patch("bounded_input.os.fdopen", side_effect=lambda *a, **k: ShortReader(original(*a, **k))):
+            with self.assertRaisesRegex(ObserverRejected, "INVALID_JSON"):
+                self.collect()
+
+    def test_growth_during_open_descriptor_read_is_bounded(self) -> None:
+        valid = self.snapshot.read_bytes()
+        enlarged = valid + b" " * (131073 - len(valid))
+        original, changed = os.fdopen, []
+
+        class GrowingReader:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                return self
+
+            def read(inner, size):
+                if not changed:
+                    changed.append(True)
+                    self.snapshot.write_bytes(enlarged)
+                return inner.stream.read(size)
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+        with mock.patch("bounded_input.os.fdopen", side_effect=lambda *a, **k: GrowingReader(original(*a, **k))):
+            with self.assertRaisesRegex(ObserverRejected, "INPUT_LIMIT"):
+                self.collect()
+        self.assertTrue(changed)
 
     def test_valid_fixture_matches_exact_expected_record(self) -> None:
         actual = json.dumps(self.collect(), indent=2, sort_keys=True) + "\n"

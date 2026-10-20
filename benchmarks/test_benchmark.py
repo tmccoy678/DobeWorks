@@ -1,5 +1,6 @@
 """Command-level tests of the Observer public-data benchmark."""
 import ast
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -31,6 +32,9 @@ class BenchmarkTests(unittest.TestCase):
             self.assertTrue(report['controls_passed'])
             self.assertEqual(len(report['cases']), 318)
             self.assertEqual(set(report['controls']), {'fresh', 'stale'})
+            helper = HERE.parent / 'contexts/operational-system/software/phase4/bounded_input.py'
+            self.assertEqual(report['source_sha256'][str(helper.relative_to(HERE.parent))],
+                             hashlib.sha256(helper.read_bytes()).hexdigest())
 
 
     def test_corpus_drift_is_an_input_error_without_a_score(self):
@@ -57,6 +61,30 @@ class BenchmarkTests(unittest.TestCase):
             self.assertEqual(run.returncode, 2)
             self.assertIn(b'manifest SHA-256 mismatch', run.stderr)
 
+    def test_input_helper_drift_during_measurement_invalidates_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(HERE, root / 'benchmarks')
+            phase = root / 'contexts/operational-system/software/phase4'
+            original = HERE.parent / 'contexts/operational-system/software/phase4'
+            shutil.copytree(original, phase)
+            candidate = phase / 'observer_core.py'
+            source = candidate.read_text()
+            tree = ast.parse(source)
+            insertion = max((node.end_lineno for node in tree.body
+                             if isinstance(node, ast.ImportFrom) and node.module == '__future__'), default=0)
+            lines = source.splitlines(keepends=True)
+            probe = ("import atexit as _ae, pathlib as _p\n"
+                     "_h = _p.Path(__file__).with_name('bounded_input.py')\n"
+                     "_ae.register(_h.write_bytes, _h.read_bytes() + b'\\n')\n")
+            candidate.write_text(''.join(lines[:insertion]) + probe + ''.join(lines[insertion:]))
+            output = root / 'report.json'
+            run = subprocess.run([sys.executable, '-B', str(root / 'benchmarks/run_benchmark.py'),
+                                  '--output', str(output)], capture_output=True, timeout=120)
+            self.assertEqual(run.returncode, 2)
+            self.assertIn(b'candidate or native inputs changed during measurement', run.stderr)
+            self.assertFalse(output.exists())
+
     def test_degenerate_and_broken_candidates_cannot_earn_success(self):
         candidates = [("import json\nprint(json.dumps({'status':'ERROR','code':'ALWAYS_REJECT','message':'test control'}))\nraise SystemExit(2)\n", 318, 0, False), ("print('not JSON')\n", 0, 318, False)]
         for source, passed, failed, controls_passed in candidates:
@@ -66,6 +94,8 @@ class BenchmarkTests(unittest.TestCase):
                 candidate = root / 'contexts/operational-system/software/phase4/observer_core.py'
                 candidate.parent.mkdir(parents=True, exist_ok=True)
                 candidate.write_text(source)
+                shutil.copyfile(HERE.parent / 'contexts/operational-system/software/phase4/bounded_input.py',
+                                candidate.parent / 'bounded_input.py')
                 shutil.copytree(HERE.parent / 'contexts/operational-system/software/phase4/fixtures', candidate.parent / 'fixtures')
                 output = root / 'benchmarks/results/report.json'
                 run = subprocess.run([sys.executable, '-B', str(root / 'benchmarks/run_benchmark.py'),
@@ -97,6 +127,7 @@ class BenchmarkTests(unittest.TestCase):
                      "    print('partial stderr', file=sys.stderr, flush=True)\n"
                      "    time.sleep(6)\n")
             candidate.write_text(''.join(lines[:insertion]) + probe + ''.join(lines[insertion:]))
+            shutil.copyfile(original.with_name('bounded_input.py'), candidate.parent / 'bounded_input.py')
             shutil.copytree(original.parent / 'fixtures', candidate.parent / 'fixtures')
             output = root / 'benchmarks/results/report.json'
             run = subprocess.run([sys.executable, '-B', str(root / 'benchmarks/run_benchmark.py'),
@@ -118,6 +149,7 @@ class BenchmarkTests(unittest.TestCase):
             original = HERE.parent / 'contexts/operational-system/software/phase4/observer_core.py'
             candidate = root / original.relative_to(HERE.parent)
             candidate.parent.mkdir(parents=True)
+            shutil.copyfile(original.with_name('bounded_input.py'), candidate.parent / 'bounded_input.py')
             # Wrap the real CLI and change only the reported stale freshness.
             candidate.write_text(
                 "import json, subprocess, sys\n"
