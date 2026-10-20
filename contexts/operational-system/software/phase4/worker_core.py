@@ -129,7 +129,7 @@ def _load_json(raw: bytes, state: str) -> dict:
 
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=reject_duplicates)
-    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as error:
+    except (ValueError, RecursionError) as error:
         raise WorkerRejected(state, "invalid UTF-8 JSON") from error
     if not isinstance(value, dict):
         raise WorkerRejected(state, "JSON root is not an object")

@@ -112,7 +112,7 @@ def _load(raw: bytes) -> dict:
 
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=reject_duplicates)
-    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as error:
+    except (ValueError, RecursionError) as error:
         raise ObserverRejected("INVALID_JSON", "input is not one UTF-8 JSON value") from error
     _check_depth(value)
     if not isinstance(value, dict):
