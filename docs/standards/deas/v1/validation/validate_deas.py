@@ -7,6 +7,7 @@ import argparse
 import ast
 import hashlib
 import json
+import math
 import os
 import re
 import selectors
@@ -18,6 +19,7 @@ from pathlib import Path
 
 
 MAX_TEXT_BYTES = 4 * 1024 * 1024
+MAX_EXTERNAL_JSON_DEPTH = 64
 GIT_TIMEOUT_SECONDS = 2
 PHASE2_TIMEOUT_SECONDS = 2
 DEGS_TIMEOUT_SECONDS = 5
@@ -154,6 +156,42 @@ class ValidationError(Exception):
         super().__init__(message)
         self.path = path
         self.rule_id = rule_id
+
+
+def parse_external_json(raw: bytes, message: str) -> object:
+    """Decode one unambiguous, finite, bounded-depth UTF-8 result."""
+    def unique_object(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("duplicate JSON key")
+            value[key] = item
+        return value
+
+    def reject_constant(token):
+        raise ValueError("nonfinite JSON constant")
+
+    try:
+        if not isinstance(raw, bytes):
+            raise ValueError("external result must be UTF-8 bytes")
+        payload = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=unique_object,
+            parse_constant=reject_constant,
+        )
+        pending = [(payload, 0)]
+        while pending:
+            value, depth = pending.pop()
+            if depth > MAX_EXTERNAL_JSON_DEPTH:
+                raise ValueError("external JSON nesting exceeds limit")
+            if isinstance(value, float) and not math.isfinite(value):
+                raise ValueError("nonfinite JSON number")
+            if isinstance(value, (dict, list)):
+                children = value.values() if isinstance(value, dict) else value
+                pending.extend((item, depth + 1) for item in children)
+        return payload
+    except (UnicodeError, ValueError, RecursionError) as error:
+        raise ValidationError(message) from error
 
 
 class DeasArgumentParser(argparse.ArgumentParser):
@@ -536,10 +574,9 @@ def verify_phase2_validator_result(
         raise ValidationError("Phase 2 validator emitted diagnostics")
     if result.returncode != 0:
         raise ValidationError("Phase 2 validator compound result is not PASS")
-    try:
-        payload = json.loads(result.stdout)
-    except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValidationError("Phase 2 validator result is not valid JSON") from error
+    payload = parse_external_json(
+        result.stdout, "Phase 2 validator result is not valid JSON"
+    )
     expected = {
         "decision": "PASS",
         "generation": 2,
@@ -550,7 +587,10 @@ def verify_phase2_validator_result(
         "schema_version": 2,
         "validation_report_decision": "PASS",
     }
-    if payload != expected:
+    # Python equality aliases booleans and numbers; external fields keep exact types.
+    if payload != expected or any(
+        type(payload[key]) is not type(value) for key, value in expected.items()
+    ):
         raise ValidationError("Phase 2 validator compound result is not PASS")
     verify_generation_2_task(repository_root)
     verify_generation_2_report(repository_root)
@@ -684,10 +724,7 @@ def verify_degs_pass_output(
         raise ValidationError(f"{label} emitted diagnostics")
     if result.returncode != 0:
         raise ValidationError(f"{label} is not PASS")
-    try:
-        payload = json.loads(result.stdout)
-    except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValidationError(f"{label} result is not valid JSON") from error
+    payload = parse_external_json(result.stdout, f"{label} result is not valid JSON")
     expected_fields = {
         "applicable_rule_ids",
         "authority_lane",

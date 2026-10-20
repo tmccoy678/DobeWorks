@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/tmccoy678/DobeWorks-v2.1",
+  "base_commit": "10b4ad94dddb7ed64dbb3dd88c77dc8dd67a2d36",
+  "method": "Manual source corrections; regression-first public CLI/API tests; independent source review.",
+  "environment": {
+    "os": "macOS",
+    "version": "27.0.1",
+    "build": "26A434",
+    "architecture": "arm64",
+    "python": [
+      "3.14.7",
+      "3.9.6"
+    ],
+    "dependencies": "Python standard library; no packages installed",
+    "isolation": "Temporary venv without pip/system site packages; temporary HOME/TMPDIR; restricted environment; PYTHONDONTWRITEBYTECODE=1; no external Phase 4 specification."
+  },
+  "source_identity_note": "File hashes bind the final tested source generation; base_commit identifies its predecessor. Earlier validator observations are retained and explicitly superseded. Git delivery identities are recorded outside this immutable evidence package.",
+  "source_sha256": {
+    "benchmarks/run_benchmark.py": "e6076a1dca510e0583287e11365bc81ec61e1d455185d5dac775beeffea163cf",
+    "benchmarks/test_benchmark.py": "75f28e7720914f8c899ed1603b4bc6ae57f171e187e8c85af0b5eadc7c469c05",
+    "contexts/operational-system/docs/program/v1/architecture/phase-3/validation/test_validate_phase3.py": "620f49a2631973f3fde67b2e48842d8ff3fd9d4ef1c5f95726c7c0a53f9e94f8",
+    "contexts/operational-system/docs/program/v1/architecture/phase-3/validation/validate_phase3.py": "24a3d5f2aaeb0abbb9cd63cd972ad56ea3b55a1280acb53f7914d67b83dcc409",
+    "contexts/operational-system/docs/program/v1/architecture/phase-4/validation/test_validate_phase4.py": "433133eaba775aa41393592806dce1ec0c48f62fa4b8ad925a5ba2083612d05d",
+    "contexts/operational-system/docs/program/v1/architecture/phase-4/validation/validate_phase4.py": "d3733f999361c4295c285394b8919698597f187af8b4faacaefe64f45e4fd7e5",
+    "contexts/operational-system/docs/program/v1/qualification/phase-2/validation/validate_phase2.py": "7091be0295d7c7213424f2771605b4994343e646698a68fd3725c5ecd71194aa",
+    "contexts/operational-system/software/phase4/bounded_input.py": "8f3d2c05b6a3d28b17792b893abd5c3b624890dc075da02892cbd802d5b4f669",
+    "contexts/operational-system/software/phase4/fixtures/expected-observer-record.json": "711a2d9fdc2a253a672ca3e054af4e1dda3de5c295f95e4b12f8fe5ae832e6a3",
+    "contexts/operational-system/software/phase4/fixtures/expected-result.json": "1099ce46272a14af8ba7372857c0f634a2feb2d20ade0ce2a96a6dfdc56d6fae",
+    "contexts/operational-system/software/phase4/fixtures/input-records.json": "d4dcacb9c25b2758e28a4cc218193645f004a8f880c42c515498a259e177aa36",
+    "contexts/operational-system/software/phase4/fixtures/job-envelope.json": "57fe274106d1f3a129f6fe2c8bea1d3247925b1ba51f6221b3e8c8a35cc3d894",
+    "contexts/operational-system/software/phase4/fixtures/observer-policy.json": "9246169419e7e0b8dee9280667208f2f632a83a97f13c065188df2ac5b32683b",
+    "contexts/operational-system/software/phase4/fixtures/observer-snapshot.json": "2c0d8abdcaa3d63c7517b7768ebbb7121cc7472aa7c9956dd7bf3c420498ddd1",
+    "contexts/operational-system/software/phase4/observer_core.py": "c5c67762448acc63dc54a98e9329523fe48facae80d6e5e3c05251591db71148",
+    "contexts/operational-system/software/phase4/test_observer_core.py": "77dc75b4e3ee10036c6793619e8c2fad7c81a96f1872a357bad656603e61fdfe",
+    "contexts/operational-system/software/phase4/test_worker_core.py": "87525290b133a000d8ed3d6520fce2a361b0bbb31537d554b007eaf19d1d8453",
+    "contexts/operational-system/software/phase4/worker_core.py": "e05290b6f583ceece0091300b5d81835321d468192f4fe8852c33a398a388288",
+    "docs/standards/deas/v1/standard.md": "df1644513d48022a3b9f01392fa33e391680b0d1e9341594fbc272ee44237586",
+    "docs/standards/deas/v1/validation/generation-1-expected-findings.json": "f44dc2714bba2100eb5d22f26502d03b5c7f95f4ee6ebc7986e80e2f3b3aa09f",
+    "docs/standards/deas/v1/validation/test_external_gate_results.py": "f63f30c65ba72daf75aa57d41b7b0f5fa7d1ea1af04697964379bec451228f40",
+    "docs/standards/deas/v1/validation/test_validate_deas.py": "a92e79b34c266e77aab3471afd961fab0d133d98442061069b5054daebe96735",
+    "docs/standards/deas/v1/validation/validate_deas.py": "f4c1158d7fa7947bb56e281ae1638e02aaa02cef00900624d7f6f3da54abcf1c"
+  },
+  "accepted_record_indices": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "final_suite_summary": [
+    {
+      "record_index": 0,
+      "suite": "core",
+      "interpreter": "3.14",
+      "discovered": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 2,
+      "suite": "phase3",
+      "interpreter": "3.14",
+      "discovered": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 3,
+      "suite": "phase4",
+      "interpreter": "3.14",
+      "discovered": 32,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 32
+    },
+    {
+      "record_index": 4,
+      "suite": "bench-tests",
+      "interpreter": "3.14",
+      "discovered": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 5,
+      "suite": "core",
+      "interpreter": "3.9",
+      "discovered": 84,
+      "passed": 84,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 7,
+      "suite": "deas",
+      "interpreter": "3.14",
+      "discovered": 39,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 8,
+      "suite": "deas",
+      "interpreter": "3.9",
+      "discovered": 39,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 9,
+      "suite": "phase3",
+      "interpreter": "3.9",
+      "discovered": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "record_index": 10,
+      "suite": "phase4",
+      "interpreter": "3.9",
+      "discovered": 32,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 32
+    },
+    {
+      "record_index": 11,
+      "suite": "bench-tests",
+      "interpreter": "3.9",
+      "discovered": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "superseded_record_indices": [
+    1,
+    6
+  ],
+  "supersession_note": "For DobeWorks, original records1 and6 precede the final compound scalar-type correction; record6 preserves four failing subtests. Complete39-test reruns in records7 and8 establish final validator behavior. Other final suites were not affected by that correction.",
+  "benchmark": {
+    "path": "benchmarks/results/apple-silicon-v3.json",
+    "sha256": "6f6bbf75c59409637ef7c9ce360054aca9753fd2814fc42ea55a54104ab511aa",
+    "selected": 318,
+    "passed": 318,
+    "failed": 0,
+    "controls_passed": true
+  },
+  "limitations": [
+    "Synthetic/component evidence; no installation, operational activation, qualification, authorization, or integrated-system claim.",
+    "Historical Phase4 tests require an undistributed external specification and skip when it is absent."
+  ],
+  "records": [
+    {
+      "suite": "core",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/software/phase4",
+        "-p",
+        "test_*_core.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:58:52.006529+00:00",
+      "ended_at": "2026-10-20T20:58:54.336926+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_allowed_root_identity_drift_is_rejected (test_observer_core.ObserverCoreTests.test_allowed_root_identity_drift_is_rejected) ... ok\ntest_cli_emits_one_complete_json_result (test_observer_core.ObserverCoreTests.test_cli_emits_one_complete_json_result) ... ok\ntest_clock_uncertainty_marks_meanings_unknown (test_observer_core.ObserverCoreTests.test_clock_uncertainty_marks_meanings_unknown) ... ok\ntest_collector_failure_is_unavailable (test_observer_core.ObserverCoreTests.test_collector_failure_is_unavailable) ... ok\ntest_core_exposes_no_action_authority (test_observer_core.ObserverCoreTests.test_core_exposes_no_action_authority) ... ok\ntest_credential_and_secret_aliases_are_rejected (test_observer_core.ObserverCoreTests.test_credential_and_secret_aliases_are_rejected) ... ok\ntest_deep_json_is_rejected_without_traceback (test_observer_core.ObserverCoreTests.test_deep_json_is_rejected_without_traceback) ... ok\ntest_dropped_records_mark_interval_unknown (test_observer_core.ObserverCoreTests.test_dropped_records_mark_interval_unknown) ... ok\ntest_duplicate_and_unknown_signals_are_rejected (test_observer_core.ObserverCoreTests.test_duplicate_and_unknown_signals_are_rejected) ... ok\ntest_duplicate_json_key_is_rejected (test_observer_core.ObserverCoreTests.test_duplicate_json_key_is_rejected) ... ok\ntest_growth_between_check_and_open_is_bounded (test_observer_core.ObserverCoreTests.test_growth_between_check_and_open_is_bounded) ... ok\ntest_growth_during_open_descriptor_read_is_bounded (test_observer_core.ObserverCoreTests.test_growth_during_open_descriptor_read_is_bounded) ... ok\ntest_input_descriptors_close_on_success_and_rejection (test_observer_core.ObserverCoreTests.test_input_descriptors_close_on_success_and_rejection) ... ok\ntest_invalid_retention_request_is_rejected (test_observer_core.ObserverCoreTests.test_invalid_retention_request_is_rejected) ... ok\ntest_missing_signal_is_explicit_unknown (test_observer_core.ObserverCoreTests.test_missing_signal_is_explicit_unknown) ... ok\ntest_nested_prohibited_field_is_rejected (test_observer_core.ObserverCoreTests.test_nested_prohibited_field_is_rejected) ... ok\ntest_out_of_root_and_symlink_inputs_are_rejected (test_observer_core.ObserverCoreTests.test_out_of_root_and_symlink_inputs_are_rejected) ... ok\ntest_oversized_input_is_rejected (test_observer_core.ObserverCoreTests.test_oversized_input_is_rejected) ... ok\ntest_parent_swap_cannot_redirect_an_open_directory (test_observer_core.ObserverCoreTests.test_parent_swap_cannot_redirect_an_open_directory) ... ok\ntest_policy_must_equal_accepted_decision (test_observer_core.ObserverCoreTests.test_policy_must_equal_accepted_decision) ... ok\ntest_private_vault_text_is_rejected (test_observer_core.ObserverCoreTests.test_private_vault_text_is_rejected) ... ok\ntest_public_api_types_fail_closed (test_observer_core.ObserverCoreTests.test_public_api_types_fail_closed) ... ok\ntest_result_is_deterministic (test_observer_core.ObserverCoreTests.test_result_is_deterministic) ... ok\ntest_retention_age_has_a_fixed_upper_bound (test_observer_core.ObserverCoreTests.test_retention_age_has_a_fixed_upper_bound) ... ok\ntest_retention_boundaries_decide_without_deleting (test_observer_core.ObserverCoreTests.test_retention_boundaries_decide_without_deleting) ... ok\ntest_schema_mismatch_surfaces_unknown (test_observer_core.ObserverCoreTests.test_schema_mismatch_surfaces_unknown) ... ok\ntest_short_reads_do_not_hide_trailing_malformed_input (test_observer_core.ObserverCoreTests.test_short_reads_do_not_hide_trailing_malformed_input) ... ok\ntest_stale_snapshot_never_implies_health (test_observer_core.ObserverCoreTests.test_stale_snapshot_never_implies_health) ... ok\ntest_swap_to_external_symlink_at_open_is_rejected (test_observer_core.ObserverCoreTests.test_swap_to_external_symlink_at_open_is_rejected) ... ok\ntest_symlink_loop_allowed_root_fails_closed_through_core_and_cli (test_observer_core.ObserverCoreTests.test_symlink_loop_allowed_root_fails_closed_through_core_and_cli) ... ok\ntest_symlink_loop_input_is_rejected (test_observer_core.ObserverCoreTests.test_symlink_loop_input_is_rejected) ... ok\ntest_symlinked_input_ancestor_is_rejected (test_observer_core.ObserverCoreTests.test_symlinked_input_ancestor_is_rejected) ... ok\ntest_unhashable_signal_and_api_values_are_rejected (test_observer_core.ObserverCoreTests.test_unhashable_signal_and_api_values_are_rejected) ... ok\ntest_unknown_top_level_field_is_rejected (test_observer_core.ObserverCoreTests.test_unknown_top_level_field_is_rejected) ... ok\ntest_valid_fixture_matches_exact_expected_record (test_observer_core.ObserverCoreTests.test_valid_fixture_matches_exact_expected_record) ... ok\ntest_allowed_root_identity_drift_is_rejected (test_worker_core.WorkerCoreTests.test_allowed_root_identity_drift_is_rejected) ... ok\ntest_boolean_numeric_controls_are_rejected (test_worker_core.WorkerCoreTests.test_boolean_numeric_controls_are_rejected) ... ok\ntest_cancellation_before_execution_is_bounded (test_worker_core.WorkerCoreTests.test_cancellation_before_execution_is_bounded) ... ok\ntest_cancellation_candidate_preservation_has_the_envelope_deadline (test_worker_core.WorkerCoreTests.test_cancellation_candidate_preservation_has_the_envelope_deadline) ... ok\ntest_cancellation_race_preserves_partial_output (test_worker_core.WorkerCoreTests.test_cancellation_race_preserves_partial_output) ... ok\ntest_changed_envelope_reusing_job_id_is_rejected (test_worker_core.WorkerCoreTests.test_changed_envelope_reusing_job_id_is_rejected) ... ok\ntest_cli_emits_one_complete_json_result (test_worker_core.WorkerCoreTests.test_cli_emits_one_complete_json_result) ... ok\ntest_communication_loss_is_explicitly_ambiguous (test_worker_core.WorkerCoreTests.test_communication_loss_is_explicitly_ambiguous) ... ok\ntest_configuration_mismatch_is_rejected (test_worker_core.WorkerCoreTests.test_configuration_mismatch_is_rejected) ... ok\ntest_core_enforces_the_envelope_deadline (test_worker_core.WorkerCoreTests.test_core_enforces_the_envelope_deadline) ... ok\ntest_core_exposes_no_promotion_operation (test_worker_core.WorkerCoreTests.test_core_exposes_no_promotion_operation) ... ok\ntest_deep_json_envelope_is_rejected_without_traceback (test_worker_core.WorkerCoreTests.test_deep_json_envelope_is_rejected_without_traceback) ... ok\ntest_deep_runner_result_is_a_structured_failure (test_worker_core.WorkerCoreTests.test_deep_runner_result_is_a_structured_failure) ... ok\ntest_destination_created_by_runner_is_not_replaced (test_worker_core.WorkerCoreTests.test_destination_created_by_runner_is_not_replaced) ... ok\ntest_duplicate_json_key_is_rejected (test_worker_core.WorkerCoreTests.test_duplicate_json_key_is_rejected) ... ok\ntest_existing_destination_is_rejected (test_worker_core.WorkerCoreTests.test_existing_destination_is_rejected) ... ok\ntest_expected_output_digest_mismatch_is_not_handed_back (test_worker_core.WorkerCoreTests.test_expected_output_digest_mismatch_is_not_handed_back) ... ok\ntest_expired_envelope_is_rejected_without_runner (test_worker_core.WorkerCoreTests.test_expired_envelope_is_rejected_without_runner) ... ok\ntest_failed_serialization_placeholder_cannot_be_handed_back (test_worker_core.WorkerCoreTests.test_failed_serialization_placeholder_cannot_be_handed_back) ... ok\ntest_growth_between_check_and_open_is_bounded (test_worker_core.WorkerCoreTests.test_growth_between_check_and_open_is_bounded) ... ok\ntest_handback_write_and_rename_failures_are_structured (test_worker_core.WorkerCoreTests.test_handback_write_and_rename_failures_are_structured) ... ok\ntest_input_digest_mismatch_is_rejected (test_worker_core.WorkerCoreTests.test_input_digest_mismatch_is_rejected) ... ok\ntest_input_outside_allowed_root_is_rejected (test_worker_core.WorkerCoreTests.test_input_outside_allowed_root_is_rejected) ... ok\ntest_interruption_is_explicitly_ambiguous (test_worker_core.WorkerCoreTests.test_interruption_is_explicitly_ambiguous) ... ok\ntest_invalid_output_remains_partial_and_unpromoted (test_worker_core.WorkerCoreTests.test_invalid_output_remains_partial_and_unpromoted) ... ok\ntest_job_registry_has_a_fixed_capacity (test_worker_core.WorkerCoreTests.test_job_registry_has_a_fixed_capacity) ... ok\ntest_missing_required_envelope_field_is_rejected (test_worker_core.WorkerCoreTests.test_missing_required_envelope_field_is_rejected) ... ok\ntest_network_unavailable_does_not_substitute_a_source (test_worker_core.WorkerCoreTests.test_network_unavailable_does_not_substitute_a_source) ... ok\ntest_output_depth_is_explicit_even_when_encoder_accepts_it (test_worker_core.WorkerCoreTests.test_output_depth_is_explicit_even_when_encoder_accepts_it) ... ok\ntest_oversized_input_is_rejected (test_worker_core.WorkerCoreTests.test_oversized_input_is_rejected) ... ok\ntest_oversized_output_is_not_handed_back (test_worker_core.WorkerCoreTests.test_oversized_output_is_not_handed_back) ... ok\ntest_parent_swap_cannot_redirect_an_open_directory (test_worker_core.WorkerCoreTests.test_parent_swap_cannot_redirect_an_open_directory) ... ok\ntest_partial_directory_creation_failure_is_structured (test_worker_core.WorkerCoreTests.test_partial_directory_creation_failure_is_structured) ... ok\ntest_public_api_types_fail_closed (test_worker_core.WorkerCoreTests.test_public_api_types_fail_closed) ... ok\ntest_result_is_deterministic_across_fresh_cores (test_worker_core.WorkerCoreTests.test_result_is_deterministic_across_fresh_cores) ... ok\ntest_result_write_failure_is_structured (test_worker_core.WorkerCoreTests.test_result_write_failure_is_structured) ... ok\ntest_runner_cannot_mutate_authoritative_contract (test_worker_core.WorkerCoreTests.test_runner_cannot_mutate_authoritative_contract) ... ok\ntest_same_envelope_is_deduplicated_without_execution (test_worker_core.WorkerCoreTests.test_same_envelope_is_deduplicated_without_execution) ... ok\ntest_staging_root_identity_drift_is_rejected (test_worker_core.WorkerCoreTests.test_staging_root_identity_drift_is_rejected) ... ok\ntest_swap_to_external_symlink_at_open_is_rejected (test_worker_core.WorkerCoreTests.test_swap_to_external_symlink_at_open_is_rejected) ... ok\ntest_symlink_input_and_staging_root_are_rejected (test_worker_core.WorkerCoreTests.test_symlink_input_and_staging_root_are_rejected) ... ok\ntest_symlink_loop_allowed_root_fails_closed_through_core_and_cli (test_worker_core.WorkerCoreTests.test_symlink_loop_allowed_root_fails_closed_through_core_and_cli) ... ok\ntest_symlink_loop_input_is_rejected (test_worker_core.WorkerCoreTests.test_symlink_loop_input_is_rejected) ... ok\ntest_symlinked_input_ancestor_is_rejected (test_worker_core.WorkerCoreTests.test_symlinked_input_ancestor_is_rejected) ... ok\ntest_timeout_has_one_attempt_and_no_automatic_retry (test_worker_core.WorkerCoreTests.test_timeout_has_one_attempt_and_no_automatic_retry) ... ok\ntest_unavailable_or_occupied_deadline_control_fails_closed (test_worker_core.WorkerCoreTests.test_unavailable_or_occupied_deadline_control_fails_closed) ... ok\ntest_unhashable_record_kind_is_rejected (test_worker_core.WorkerCoreTests.test_unhashable_record_kind_is_rejected) ... ok\ntest_unknown_envelope_field_is_rejected (test_worker_core.WorkerCoreTests.test_unknown_envelope_field_is_rejected) ... ok\ntest_valid_fixture_is_atomic_completed_unaccepted (test_worker_core.WorkerCoreTests.test_valid_fixture_is_atomic_completed_unaccepted) ... ok\n\n----------------------------------------------------------------------\nRan 84 tests in 2.261s\n\nOK\n"
+    },
+    {
+      "suite": "deas",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/standards/deas/v1/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:58:54.337215+00:00",
+      "ended_at": "2026-10-20T20:59:02.138295+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_compound_phase2_result_accepts_exact_pass (test_external_gate_results.ExternalGateResultTests.test_compound_phase2_result_accepts_exact_pass) ... ok\ntest_compound_phase2_result_rejects_duplicate_stop_decision (test_external_gate_results.ExternalGateResultTests.test_compound_phase2_result_rejects_duplicate_stop_decision) ... ok\ntest_contradictory_duplicate_decisions_are_rejected (test_external_gate_results.ExternalGateResultTests.test_contradictory_duplicate_decisions_are_rejected) ... ok\ntest_exact_pass_remains_accepted (test_external_gate_results.ExternalGateResultTests.test_exact_pass_remains_accepted) ... ok\ntest_excessive_nesting_is_a_validation_error (test_external_gate_results.ExternalGateResultTests.test_excessive_nesting_is_a_validation_error) ... ok\ntest_invalid_utf8_is_a_validation_error (test_external_gate_results.ExternalGateResultTests.test_invalid_utf8_is_a_validation_error) ... ok\ntest_nested_duplicates_are_invalid_json (test_external_gate_results.ExternalGateResultTests.test_nested_duplicates_are_invalid_json) ... ok\ntest_nonfinite_values_are_invalid_json (test_external_gate_results.ExternalGateResultTests.test_nonfinite_values_are_invalid_json) ... ok\ntest_other_json_encodings_are_not_utf8 (test_external_gate_results.ExternalGateResultTests.test_other_json_encodings_are_not_utf8) ... ok\ntest_definition_cli_prevents_oversize_git_output (test_validate_deas.DeasValidatorCliTests.test_definition_cli_prevents_oversize_git_output) ... ok\ntest_definition_cli_rejects_successful_git_diagnostics (test_validate_deas.DeasValidatorCliTests.test_definition_cli_rejects_successful_git_diagnostics) ... ok\ntest_definition_cli_terminates_a_stalled_git_read (test_validate_deas.DeasValidatorCliTests.test_definition_cli_terminates_a_stalled_git_read) ... ok\ntest_definition_passes_with_frozen_generation_1_regression (test_validate_deas.DeasValidatorCliTests.test_definition_passes_with_frozen_generation_1_regression) ... ok\ntest_definition_rejects_edited_historical_readme (test_validate_deas.DeasValidatorCliTests.test_definition_rejects_edited_historical_readme) ... ok\ntest_evidence_record_cli_rejects_empty_and_duplicate_values (test_validate_deas.DeasValidatorCliTests.test_evidence_record_cli_rejects_empty_and_duplicate_values) ... ok\ntest_evidence_record_cli_rejects_oversize_input (test_validate_deas.DeasValidatorCliTests.test_evidence_record_cli_rejects_oversize_input) ... ok\ntest_generation_1_fails_with_exact_semantic_findings (test_validate_deas.DeasValidatorCliTests.test_generation_1_fails_with_exact_semantic_findings) ... ok\ntest_generation_1_rejects_a_tampered_baseline (test_validate_deas.DeasValidatorCliTests.test_generation_1_rejects_a_tampered_baseline) ... ok\ntest_generation_2_independently_rejects_an_incomplete_report (test_validate_deas.DeasValidatorCliTests.test_generation_2_independently_rejects_an_incomplete_report) ... ok\ntest_generation_2_independently_rejects_an_incomplete_task (test_validate_deas.DeasValidatorCliTests.test_generation_2_independently_rejects_an_incomplete_task) ... ok\ntest_generation_2_rejects_a_malformed_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_a_malformed_identity_manifest) ... ok\ntest_generation_2_rejects_a_role_disposition_addition (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_a_role_disposition_addition) ... ok\ntest_generation_2_rejects_an_incomplete_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_incomplete_identity_manifest) ... ok\ntest_generation_2_rejects_an_inert_phase2_validator (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_inert_phase2_validator) ... ok\ntest_generation_2_rejects_an_out_of_root_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_out_of_root_identity_manifest) ... ok\ntest_generation_2_rejects_an_unfrozen_engineering_gate (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_unfrozen_engineering_gate) ... ok\ntest_generation_2_rejects_changed_original_observations (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_changed_original_observations) ... ok\ntest_generation_2_rejects_each_embedded_completion_claim (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_each_embedded_completion_claim) ... ok\ntest_generation_2_rejects_missing_collection_state (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_missing_collection_state) ... ok\ntest_generation_2_rejects_phase2_validator_diagnostics (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_phase2_validator_diagnostics) ... ok\ntest_generation_2_rejects_report_without_literal_commands (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_report_without_literal_commands) ... ok\ntest_generation_2_rejects_unstable_discrepancy_references (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_unstable_discrepancy_references) ... ok\ntest_generation_2_requires_an_exact_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_requires_an_exact_identity_manifest) ... ok\ntest_generation_2_requires_the_exact_manifest_path (test_validate_deas.DeasValidatorCliTests.test_generation_2_requires_the_exact_manifest_path) ... ok\ntest_generation_2_terminates_a_stalled_phase2_validator (test_validate_deas.DeasValidatorCliTests.test_generation_2_terminates_a_stalled_phase2_validator) ... ok\ntest_json_argument_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests.test_json_argument_failure_is_machine_readable) ... ok\ntest_json_runtime_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests.test_json_runtime_failure_is_machine_readable) ... ok\ntest_validation_report_satisfies_the_evidence_record_contract (test_validate_deas.DeasValidatorCliTests.test_validation_report_satisfies_the_evidence_record_contract) ... ok\n\n----------------------------------------------------------------------\nRan 38 tests in 7.754s\n\nOK\n"
+    },
+    {
+      "suite": "phase3",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/docs/program/v1/architecture/phase-3/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:59:02.138613+00:00",
+      "ended_at": "2026-10-20T20:59:03.702994+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_ambiguous_plan_package_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_ambiguous_plan_package_state_is_rejected_after_rehash) ... ok\ntest_duplicate_task_status_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_duplicate_task_status_is_rejected_after_rehash) ... ok\ntest_exact_package_passes (test_validate_phase3.Phase3PublicCliTests.test_exact_package_passes) ... ok\ntest_external_manifest_digest_mismatch_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_external_manifest_digest_mismatch_is_rejected) ... ok\ntest_false_qualification_claim_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_false_qualification_claim_is_rejected_after_rehash) ... ok\ntest_handoff_completion_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_handoff_completion_state_is_rejected_after_rehash) ... ok\ntest_indented_ambiguous_plan_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_indented_ambiguous_plan_state_is_rejected_after_rehash) ... ok\ntest_invalid_digest_argument_is_structured (test_validate_phase3.Phase3PublicCliTests.test_invalid_digest_argument_is_structured) ... ok\ntest_invalid_disposition_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_invalid_disposition_is_rejected_after_rehash) ... ok\ntest_manifest_hash_mismatch_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_manifest_hash_mismatch_is_rejected) ... ok\ntest_missing_evidence_field_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_missing_evidence_field_is_rejected_after_rehash) ... ok\ntest_missing_package_file_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_missing_package_file_is_rejected) ... ok\ntest_out_of_root_request_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_out_of_root_request_is_rejected) ... ok\ntest_oversized_required_input_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_oversized_required_input_is_rejected) ... ok\ntest_source_drift_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_source_drift_is_rejected) ... ok\ntest_stale_decisions_source_reference_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_stale_decisions_source_reference_is_rejected_after_rehash) ... ok\ntest_stale_plan_package_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_stale_plan_package_state_is_rejected_after_rehash) ... ok\ntest_unexpected_package_file_is_rejected (test_validate_phase3.Phase3PublicCliTests.test_unexpected_package_file_is_rejected) ... ok\ntest_validation_report_conformance_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests.test_validation_report_conformance_state_is_rejected_after_rehash) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 1.531s\n\nOK\n"
+    },
+    {
+      "suite": "phase4",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/docs/program/v1/architecture/phase-4/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:59:03.703389+00:00",
+      "ended_at": "2026-10-20T20:59:03.738008+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_artifact_paths_must_be_exact_and_repository_relative (test_validate_phase4.Phase4ValidatorTests.test_artifact_paths_must_be_exact_and_repository_relative) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_clean_committed_candidate_passes (test_validate_phase4.Phase4ValidatorTests.test_clean_committed_candidate_passes) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_deep_task_json_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests.test_deep_task_json_is_deterministic_nonconformance) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_duplicate_task_json_key_fails (test_validate_phase4.Phase4ValidatorTests.test_duplicate_task_json_key_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_external_spec_identity_is_required (test_validate_phase4.Phase4ValidatorTests.test_external_spec_identity_is_required) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_false_qualification_release_and_integration_claims_fail (test_validate_phase4.Phase4ValidatorTests.test_false_qualification_release_and_integration_claims_fail) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_false_task_and_handoff_lifecycle_fail (test_validate_phase4.Phase4ValidatorTests.test_false_task_and_handoff_lifecycle_fail) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_file_size_bound_fails (test_validate_phase4.Phase4ValidatorTests.test_file_size_bound_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_forbidden_network_import_fails (test_validate_phase4.Phase4ValidatorTests.test_forbidden_network_import_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_forbidden_subprocess_import_fails (test_validate_phase4.Phase4ValidatorTests.test_forbidden_subprocess_import_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_function_bound_fails (test_validate_phase4.Phase4ValidatorTests.test_function_bound_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_in_root_symlinked_package_file_fails (test_validate_phase4.Phase4ValidatorTests.test_in_root_symlinked_package_file_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_malformed_python_fails_without_validator_traceback (test_validate_phase4.Phase4ValidatorTests.test_malformed_python_fails_without_validator_traceback) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_manifest_content_and_external_identity_fail_closed (test_validate_phase4.Phase4ValidatorTests.test_manifest_content_and_external_identity_fail_closed) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_and_duplicate_evidence_fields_fail (test_validate_phase4.Phase4ValidatorTests.test_missing_and_duplicate_evidence_fields_fail) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_and_extra_package_files_fail (test_validate_phase4.Phase4ValidatorTests.test_missing_and_extra_package_files_fail) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_git_metadata_fails_closed (test_validate_phase4.Phase4ValidatorTests.test_missing_git_metadata_fails_closed) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_module_regression_is_detected (test_validate_phase4.Phase4ValidatorTests.test_module_regression_is_detected) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_nul_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests.test_nul_link_is_deterministic_nonconformance) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_overlong_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests.test_overlong_link_is_deterministic_nonconformance) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_package_tree_entry_bound_fails_closed (test_validate_phase4.Phase4ValidatorTests.test_package_tree_entry_bound_fails_closed) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_repository_root_symlink_is_rejected_as_execution_error (test_validate_phase4.Phase4ValidatorTests.test_repository_root_symlink_is_rejected_as_execution_error) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_source_drift_fails (test_validate_phase4.Phase4ValidatorTests.test_source_drift_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_source_register_requires_exact_path_digest_pair (test_validate_phase4.Phase4ValidatorTests.test_source_register_requires_exact_path_digest_pair) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_suffixed_evidence_identity_fails (test_validate_phase4.Phase4ValidatorTests.test_suffixed_evidence_identity_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_symlink_loop_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests.test_symlink_loop_link_is_deterministic_nonconformance) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_trace_gap_fails (test_validate_phase4.Phase4ValidatorTests.test_trace_gap_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unbounded_subprocess_wait_fails (test_validate_phase4.Phase4ValidatorTests.test_unbounded_subprocess_wait_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unexpected_module_test_diagnostics_fail (test_validate_phase4.Phase4ValidatorTests.test_unexpected_module_test_diagnostics_fail) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unhashable_task_status_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests.test_unhashable_task_status_is_deterministic_nonconformance) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unresolved_relative_link_fails (test_validate_phase4.Phase4ValidatorTests.test_unresolved_relative_link_fails) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_valid_package_passes (test_validate_phase4.Phase4ValidatorTests.test_valid_package_passes) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\n\n----------------------------------------------------------------------\nRan 32 tests in 0.000s\n\nOK (skipped=32)\n"
+    },
+    {
+      "suite": "bench-tests",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:59:03.738345+00:00",
+      "ended_at": "2026-10-20T20:59:58.517527+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_contradictory_stale_freshness_invalidates_run (test_benchmark.BenchmarkTests.test_contradictory_stale_freshness_invalidates_run) ... ok\ntest_corpus_drift_is_an_input_error_without_a_score (test_benchmark.BenchmarkTests.test_corpus_drift_is_an_input_error_without_a_score) ... ok\ntest_degenerate_and_broken_candidates_cannot_earn_success (test_benchmark.BenchmarkTests.test_degenerate_and_broken_candidates_cannot_earn_success) ... ok\ntest_full_corpus_and_native_controls_are_reported_separately (test_benchmark.BenchmarkTests.test_full_corpus_and_native_controls_are_reported_separately) ... ok\ntest_input_helper_drift_during_measurement_invalidates_run (test_benchmark.BenchmarkTests.test_input_helper_drift_during_measurement_invalidates_run) ... ok\ntest_one_timeout_remains_a_failed_case_in_the_denominator (test_benchmark.BenchmarkTests.test_one_timeout_remains_a_failed_case_in_the_denominator) ... ok\ntest_selection_manifest_drift_is_rejected (test_benchmark.BenchmarkTests.test_selection_manifest_drift_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 54.745s\n\nOK\n"
+    },
+    {
+      "suite": "core",
+      "interpreter": "3.9",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/software/phase4",
+        "-p",
+        "test_*_core.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T20:59:58.517828+00:00",
+      "ended_at": "2026-10-20T21:00:01.346655+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_allowed_root_identity_drift_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_cli_emits_one_complete_json_result (test_observer_core.ObserverCoreTests) ... ok\ntest_clock_uncertainty_marks_meanings_unknown (test_observer_core.ObserverCoreTests) ... ok\ntest_collector_failure_is_unavailable (test_observer_core.ObserverCoreTests) ... ok\ntest_core_exposes_no_action_authority (test_observer_core.ObserverCoreTests) ... ok\ntest_credential_and_secret_aliases_are_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_deep_json_is_rejected_without_traceback (test_observer_core.ObserverCoreTests) ... ok\ntest_dropped_records_mark_interval_unknown (test_observer_core.ObserverCoreTests) ... ok\ntest_duplicate_and_unknown_signals_are_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_duplicate_json_key_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_growth_between_check_and_open_is_bounded (test_observer_core.ObserverCoreTests) ... ok\ntest_growth_during_open_descriptor_read_is_bounded (test_observer_core.ObserverCoreTests) ... ok\ntest_input_descriptors_close_on_success_and_rejection (test_observer_core.ObserverCoreTests) ... ok\ntest_invalid_retention_request_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_missing_signal_is_explicit_unknown (test_observer_core.ObserverCoreTests) ... ok\ntest_nested_prohibited_field_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_out_of_root_and_symlink_inputs_are_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_oversized_input_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_parent_swap_cannot_redirect_an_open_directory (test_observer_core.ObserverCoreTests) ... ok\ntest_policy_must_equal_accepted_decision (test_observer_core.ObserverCoreTests) ... ok\ntest_private_vault_text_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_public_api_types_fail_closed (test_observer_core.ObserverCoreTests) ... ok\ntest_result_is_deterministic (test_observer_core.ObserverCoreTests) ... ok\ntest_retention_age_has_a_fixed_upper_bound (test_observer_core.ObserverCoreTests) ... ok\ntest_retention_boundaries_decide_without_deleting (test_observer_core.ObserverCoreTests) ... ok\ntest_schema_mismatch_surfaces_unknown (test_observer_core.ObserverCoreTests) ... ok\ntest_short_reads_do_not_hide_trailing_malformed_input (test_observer_core.ObserverCoreTests) ... ok\ntest_stale_snapshot_never_implies_health (test_observer_core.ObserverCoreTests) ... ok\ntest_swap_to_external_symlink_at_open_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_symlink_loop_allowed_root_fails_closed_through_core_and_cli (test_observer_core.ObserverCoreTests) ... ok\ntest_symlink_loop_input_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_symlinked_input_ancestor_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_unhashable_signal_and_api_values_are_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_unknown_top_level_field_is_rejected (test_observer_core.ObserverCoreTests) ... ok\ntest_valid_fixture_matches_exact_expected_record (test_observer_core.ObserverCoreTests) ... ok\ntest_allowed_root_identity_drift_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_boolean_numeric_controls_are_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_cancellation_before_execution_is_bounded (test_worker_core.WorkerCoreTests) ... ok\ntest_cancellation_candidate_preservation_has_the_envelope_deadline (test_worker_core.WorkerCoreTests) ... ok\ntest_cancellation_race_preserves_partial_output (test_worker_core.WorkerCoreTests) ... ok\ntest_changed_envelope_reusing_job_id_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_cli_emits_one_complete_json_result (test_worker_core.WorkerCoreTests) ... ok\ntest_communication_loss_is_explicitly_ambiguous (test_worker_core.WorkerCoreTests) ... ok\ntest_configuration_mismatch_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_core_enforces_the_envelope_deadline (test_worker_core.WorkerCoreTests) ... ok\ntest_core_exposes_no_promotion_operation (test_worker_core.WorkerCoreTests) ... ok\ntest_deep_json_envelope_is_rejected_without_traceback (test_worker_core.WorkerCoreTests) ... ok\ntest_deep_runner_result_is_a_structured_failure (test_worker_core.WorkerCoreTests) ... ok\ntest_destination_created_by_runner_is_not_replaced (test_worker_core.WorkerCoreTests) ... ok\ntest_duplicate_json_key_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_existing_destination_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_expected_output_digest_mismatch_is_not_handed_back (test_worker_core.WorkerCoreTests) ... ok\ntest_expired_envelope_is_rejected_without_runner (test_worker_core.WorkerCoreTests) ... ok\ntest_failed_serialization_placeholder_cannot_be_handed_back (test_worker_core.WorkerCoreTests) ... ok\ntest_growth_between_check_and_open_is_bounded (test_worker_core.WorkerCoreTests) ... ok\ntest_handback_write_and_rename_failures_are_structured (test_worker_core.WorkerCoreTests) ... ok\ntest_input_digest_mismatch_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_input_outside_allowed_root_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_interruption_is_explicitly_ambiguous (test_worker_core.WorkerCoreTests) ... ok\ntest_invalid_output_remains_partial_and_unpromoted (test_worker_core.WorkerCoreTests) ... ok\ntest_job_registry_has_a_fixed_capacity (test_worker_core.WorkerCoreTests) ... ok\ntest_missing_required_envelope_field_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_network_unavailable_does_not_substitute_a_source (test_worker_core.WorkerCoreTests) ... ok\ntest_output_depth_is_explicit_even_when_encoder_accepts_it (test_worker_core.WorkerCoreTests) ... ok\ntest_oversized_input_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_oversized_output_is_not_handed_back (test_worker_core.WorkerCoreTests) ... ok\ntest_parent_swap_cannot_redirect_an_open_directory (test_worker_core.WorkerCoreTests) ... ok\ntest_partial_directory_creation_failure_is_structured (test_worker_core.WorkerCoreTests) ... ok\ntest_public_api_types_fail_closed (test_worker_core.WorkerCoreTests) ... ok\ntest_result_is_deterministic_across_fresh_cores (test_worker_core.WorkerCoreTests) ... ok\ntest_result_write_failure_is_structured (test_worker_core.WorkerCoreTests) ... ok\ntest_runner_cannot_mutate_authoritative_contract (test_worker_core.WorkerCoreTests) ... ok\ntest_same_envelope_is_deduplicated_without_execution (test_worker_core.WorkerCoreTests) ... ok\ntest_staging_root_identity_drift_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_swap_to_external_symlink_at_open_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_symlink_input_and_staging_root_are_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_symlink_loop_allowed_root_fails_closed_through_core_and_cli (test_worker_core.WorkerCoreTests) ... ok\ntest_symlink_loop_input_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_symlinked_input_ancestor_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_timeout_has_one_attempt_and_no_automatic_retry (test_worker_core.WorkerCoreTests) ... ok\ntest_unavailable_or_occupied_deadline_control_fails_closed (test_worker_core.WorkerCoreTests) ... ok\ntest_unhashable_record_kind_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_unknown_envelope_field_is_rejected (test_worker_core.WorkerCoreTests) ... ok\ntest_valid_fixture_is_atomic_completed_unaccepted (test_worker_core.WorkerCoreTests) ... ok\n\n----------------------------------------------------------------------\nRan 84 tests in 2.614s\n\nOK\n"
+    },
+    {
+      "suite": "deas",
+      "interpreter": "3.9",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/standards/deas/v1/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:01.346980+00:00",
+      "ended_at": "2026-10-20T21:00:11.292073+00:00",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "test_compound_phase2_result_accepts_exact_pass (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_compound_phase2_result_rejects_duplicate_stop_decision (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) ... test_contradictory_duplicate_decisions_are_rejected (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_exact_pass_remains_accepted (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_excessive_nesting_is_a_validation_error (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_invalid_utf8_is_a_validation_error (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_nested_duplicates_are_invalid_json (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_nonfinite_values_are_invalid_json (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_other_json_encodings_are_not_utf8 (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_definition_cli_prevents_oversize_git_output (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_cli_rejects_successful_git_diagnostics (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_cli_terminates_a_stalled_git_read (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_passes_with_frozen_generation_1_regression (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_rejects_edited_historical_readme (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_evidence_record_cli_rejects_empty_and_duplicate_values (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_evidence_record_cli_rejects_oversize_input (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_1_fails_with_exact_semantic_findings (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_1_rejects_a_tampered_baseline (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_independently_rejects_an_incomplete_report (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_independently_rejects_an_incomplete_task (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_a_malformed_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_a_role_disposition_addition (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_incomplete_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_inert_phase2_validator (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_out_of_root_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_unfrozen_engineering_gate (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_changed_original_observations (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_each_embedded_completion_claim (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_missing_collection_state (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_phase2_validator_diagnostics (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_report_without_literal_commands (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_unstable_discrepancy_references (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_requires_an_exact_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_requires_the_exact_manifest_path (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_terminates_a_stalled_phase2_validator (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_json_argument_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_json_runtime_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_validation_report_satisfies_the_evidence_record_contract (test_validate_deas.DeasValidatorCliTests) ... ok\n\n======================================================================\nFAIL: test_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) (field='identity_verified', value=1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/tmp/dobeworks-degs-review.wxwfNP/DobeWorks-v2.1/docs/standards/deas/v1/validation/test_external_gate_results.py\", line 150, in test_compound_phase2_result_rejects_wrong_scalar_types\n    deas.verify_phase2_validator_result(ROOT)\nAssertionError: ValidationError not raised\n\n======================================================================\nFAIL: test_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) (field='original_observations_preserved', value=1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/tmp/dobeworks-degs-review.wxwfNP/DobeWorks-v2.1/docs/standards/deas/v1/validation/test_external_gate_results.py\", line 150, in test_compound_phase2_result_rejects_wrong_scalar_types\n    deas.verify_phase2_validator_result(ROOT)\nAssertionError: ValidationError not raised\n\n======================================================================\nFAIL: test_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) (field='generation', value=2.0)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/tmp/dobeworks-degs-review.wxwfNP/DobeWorks-v2.1/docs/standards/deas/v1/validation/test_external_gate_results.py\", line 150, in test_compound_phase2_result_rejects_wrong_scalar_types\n    deas.verify_phase2_validator_result(ROOT)\nAssertionError: ValidationError not raised\n\n======================================================================\nFAIL: test_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) (field='schema_version', value=2.0)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/private/tmp/dobeworks-degs-review.wxwfNP/DobeWorks-v2.1/docs/standards/deas/v1/validation/test_external_gate_results.py\", line 150, in test_compound_phase2_result_rejects_wrong_scalar_types\n    deas.verify_phase2_validator_result(ROOT)\nAssertionError: ValidationError not raised\n\n----------------------------------------------------------------------\nRan 39 tests in 9.761s\n\nFAILED (failures=4)\n"
+    },
+    {
+      "suite": "deas",
+      "interpreter": "3.14",
+      "reason": "Revalidation after independent review found scalar type aliasing in compound results.",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/standards/deas/v1/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:14.432355+00:00",
+      "ended_at": "2026-10-20T21:00:22.059443+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_compound_phase2_result_accepts_exact_pass (test_external_gate_results.ExternalGateResultTests.test_compound_phase2_result_accepts_exact_pass) ... ok\ntest_compound_phase2_result_rejects_duplicate_stop_decision (test_external_gate_results.ExternalGateResultTests.test_compound_phase2_result_rejects_duplicate_stop_decision) ... ok\ntest_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests.test_compound_phase2_result_rejects_wrong_scalar_types) ... ok\ntest_contradictory_duplicate_decisions_are_rejected (test_external_gate_results.ExternalGateResultTests.test_contradictory_duplicate_decisions_are_rejected) ... ok\ntest_exact_pass_remains_accepted (test_external_gate_results.ExternalGateResultTests.test_exact_pass_remains_accepted) ... ok\ntest_excessive_nesting_is_a_validation_error (test_external_gate_results.ExternalGateResultTests.test_excessive_nesting_is_a_validation_error) ... ok\ntest_invalid_utf8_is_a_validation_error (test_external_gate_results.ExternalGateResultTests.test_invalid_utf8_is_a_validation_error) ... ok\ntest_nested_duplicates_are_invalid_json (test_external_gate_results.ExternalGateResultTests.test_nested_duplicates_are_invalid_json) ... ok\ntest_nonfinite_values_are_invalid_json (test_external_gate_results.ExternalGateResultTests.test_nonfinite_values_are_invalid_json) ... ok\ntest_other_json_encodings_are_not_utf8 (test_external_gate_results.ExternalGateResultTests.test_other_json_encodings_are_not_utf8) ... ok\ntest_definition_cli_prevents_oversize_git_output (test_validate_deas.DeasValidatorCliTests.test_definition_cli_prevents_oversize_git_output) ... ok\ntest_definition_cli_rejects_successful_git_diagnostics (test_validate_deas.DeasValidatorCliTests.test_definition_cli_rejects_successful_git_diagnostics) ... ok\ntest_definition_cli_terminates_a_stalled_git_read (test_validate_deas.DeasValidatorCliTests.test_definition_cli_terminates_a_stalled_git_read) ... ok\ntest_definition_passes_with_frozen_generation_1_regression (test_validate_deas.DeasValidatorCliTests.test_definition_passes_with_frozen_generation_1_regression) ... ok\ntest_definition_rejects_edited_historical_readme (test_validate_deas.DeasValidatorCliTests.test_definition_rejects_edited_historical_readme) ... ok\ntest_evidence_record_cli_rejects_empty_and_duplicate_values (test_validate_deas.DeasValidatorCliTests.test_evidence_record_cli_rejects_empty_and_duplicate_values) ... ok\ntest_evidence_record_cli_rejects_oversize_input (test_validate_deas.DeasValidatorCliTests.test_evidence_record_cli_rejects_oversize_input) ... ok\ntest_generation_1_fails_with_exact_semantic_findings (test_validate_deas.DeasValidatorCliTests.test_generation_1_fails_with_exact_semantic_findings) ... ok\ntest_generation_1_rejects_a_tampered_baseline (test_validate_deas.DeasValidatorCliTests.test_generation_1_rejects_a_tampered_baseline) ... ok\ntest_generation_2_independently_rejects_an_incomplete_report (test_validate_deas.DeasValidatorCliTests.test_generation_2_independently_rejects_an_incomplete_report) ... ok\ntest_generation_2_independently_rejects_an_incomplete_task (test_validate_deas.DeasValidatorCliTests.test_generation_2_independently_rejects_an_incomplete_task) ... ok\ntest_generation_2_rejects_a_malformed_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_a_malformed_identity_manifest) ... ok\ntest_generation_2_rejects_a_role_disposition_addition (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_a_role_disposition_addition) ... ok\ntest_generation_2_rejects_an_incomplete_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_incomplete_identity_manifest) ... ok\ntest_generation_2_rejects_an_inert_phase2_validator (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_inert_phase2_validator) ... ok\ntest_generation_2_rejects_an_out_of_root_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_out_of_root_identity_manifest) ... ok\ntest_generation_2_rejects_an_unfrozen_engineering_gate (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_an_unfrozen_engineering_gate) ... ok\ntest_generation_2_rejects_changed_original_observations (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_changed_original_observations) ... ok\ntest_generation_2_rejects_each_embedded_completion_claim (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_each_embedded_completion_claim) ... ok\ntest_generation_2_rejects_missing_collection_state (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_missing_collection_state) ... ok\ntest_generation_2_rejects_phase2_validator_diagnostics (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_phase2_validator_diagnostics) ... ok\ntest_generation_2_rejects_report_without_literal_commands (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_report_without_literal_commands) ... ok\ntest_generation_2_rejects_unstable_discrepancy_references (test_validate_deas.DeasValidatorCliTests.test_generation_2_rejects_unstable_discrepancy_references) ... ok\ntest_generation_2_requires_an_exact_identity_manifest (test_validate_deas.DeasValidatorCliTests.test_generation_2_requires_an_exact_identity_manifest) ... ok\ntest_generation_2_requires_the_exact_manifest_path (test_validate_deas.DeasValidatorCliTests.test_generation_2_requires_the_exact_manifest_path) ... ok\ntest_generation_2_terminates_a_stalled_phase2_validator (test_validate_deas.DeasValidatorCliTests.test_generation_2_terminates_a_stalled_phase2_validator) ... ok\ntest_json_argument_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests.test_json_argument_failure_is_machine_readable) ... ok\ntest_json_runtime_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests.test_json_runtime_failure_is_machine_readable) ... ok\ntest_validation_report_satisfies_the_evidence_record_contract (test_validate_deas.DeasValidatorCliTests.test_validation_report_satisfies_the_evidence_record_contract) ... ok\n\n----------------------------------------------------------------------\nRan 39 tests in 7.577s\n\nOK\n"
+    },
+    {
+      "suite": "deas",
+      "interpreter": "3.9",
+      "reason": "Revalidation after independent review found scalar type aliasing in compound results.",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/standards/deas/v1/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:22.059730+00:00",
+      "ended_at": "2026-10-20T21:00:31.863264+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_compound_phase2_result_accepts_exact_pass (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_compound_phase2_result_rejects_duplicate_stop_decision (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_compound_phase2_result_rejects_wrong_scalar_types (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_contradictory_duplicate_decisions_are_rejected (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_exact_pass_remains_accepted (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_excessive_nesting_is_a_validation_error (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_invalid_utf8_is_a_validation_error (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_nested_duplicates_are_invalid_json (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_nonfinite_values_are_invalid_json (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_other_json_encodings_are_not_utf8 (test_external_gate_results.ExternalGateResultTests) ... ok\ntest_definition_cli_prevents_oversize_git_output (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_cli_rejects_successful_git_diagnostics (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_cli_terminates_a_stalled_git_read (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_passes_with_frozen_generation_1_regression (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_definition_rejects_edited_historical_readme (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_evidence_record_cli_rejects_empty_and_duplicate_values (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_evidence_record_cli_rejects_oversize_input (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_1_fails_with_exact_semantic_findings (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_1_rejects_a_tampered_baseline (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_independently_rejects_an_incomplete_report (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_independently_rejects_an_incomplete_task (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_a_malformed_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_a_role_disposition_addition (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_incomplete_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_inert_phase2_validator (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_out_of_root_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_an_unfrozen_engineering_gate (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_changed_original_observations (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_each_embedded_completion_claim (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_missing_collection_state (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_phase2_validator_diagnostics (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_report_without_literal_commands (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_rejects_unstable_discrepancy_references (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_requires_an_exact_identity_manifest (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_requires_the_exact_manifest_path (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_generation_2_terminates_a_stalled_phase2_validator (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_json_argument_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_json_runtime_failure_is_machine_readable (test_validate_deas.DeasValidatorCliTests) ... ok\ntest_validation_report_satisfies_the_evidence_record_contract (test_validate_deas.DeasValidatorCliTests) ... ok\n\n----------------------------------------------------------------------\nRan 39 tests in 9.617s\n\nOK\n"
+    },
+    {
+      "suite": "phase3",
+      "interpreter": "3.9",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/docs/program/v1/architecture/phase-3/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:50.877992+00:00",
+      "ended_at": "2026-10-20T21:00:53.436655+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_ambiguous_plan_package_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_duplicate_task_status_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_exact_package_passes (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_external_manifest_digest_mismatch_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_false_qualification_claim_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_handoff_completion_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_indented_ambiguous_plan_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_invalid_digest_argument_is_structured (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_invalid_disposition_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_manifest_hash_mismatch_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_missing_evidence_field_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_missing_package_file_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_out_of_root_request_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_oversized_required_input_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_source_drift_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_stale_decisions_source_reference_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_stale_plan_package_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_unexpected_package_file_is_rejected (test_validate_phase3.Phase3PublicCliTests) ... ok\ntest_validation_report_conformance_state_is_rejected_after_rehash (test_validate_phase3.Phase3PublicCliTests) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 2.440s\n\nOK\n"
+    },
+    {
+      "suite": "phase4",
+      "interpreter": "3.9",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "contexts/operational-system/docs/program/v1/architecture/phase-4/validation",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:53.436971+00:00",
+      "ended_at": "2026-10-20T21:00:53.555354+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_artifact_paths_must_be_exact_and_repository_relative (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_clean_committed_candidate_passes (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_deep_task_json_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_duplicate_task_json_key_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_external_spec_identity_is_required (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_false_qualification_release_and_integration_claims_fail (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_false_task_and_handoff_lifecycle_fail (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_file_size_bound_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_forbidden_network_import_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_forbidden_subprocess_import_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_function_bound_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_in_root_symlinked_package_file_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_malformed_python_fails_without_validator_traceback (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_manifest_content_and_external_identity_fail_closed (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_and_duplicate_evidence_fields_fail (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_and_extra_package_files_fail (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_missing_git_metadata_fails_closed (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_module_regression_is_detected (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_nul_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_overlong_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_package_tree_entry_bound_fails_closed (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_repository_root_symlink_is_rejected_as_execution_error (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_source_drift_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_source_register_requires_exact_path_digest_pair (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_suffixed_evidence_identity_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_symlink_loop_link_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_trace_gap_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unbounded_subprocess_wait_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unexpected_module_test_diagnostics_fail (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unhashable_task_status_is_deterministic_nonconformance (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_unresolved_relative_link_fails (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\ntest_valid_package_passes (test_validate_phase4.Phase4ValidatorTests) ... skipped 'set DOBEWORKS_PHASE4_SPEC to the historical external specification'\n\n----------------------------------------------------------------------\nRan 32 tests in 0.000s\n\nOK (skipped=32)\n"
+    },
+    {
+      "suite": "bench-tests",
+      "interpreter": "3.9",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-20T21:00:53.555629+00:00",
+      "ended_at": "2026-10-20T21:03:20.900664+00:00",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_contradictory_stale_freshness_invalidates_run (test_benchmark.BenchmarkTests) ... ok\ntest_corpus_drift_is_an_input_error_without_a_score (test_benchmark.BenchmarkTests) ... ok\ntest_degenerate_and_broken_candidates_cannot_earn_success (test_benchmark.BenchmarkTests) ... ok\ntest_full_corpus_and_native_controls_are_reported_separately (test_benchmark.BenchmarkTests) ... ok\ntest_input_helper_drift_during_measurement_invalidates_run (test_benchmark.BenchmarkTests) ... ok\ntest_one_timeout_remains_a_failed_case_in_the_denominator (test_benchmark.BenchmarkTests) ... ok\ntest_selection_manifest_drift_is_rejected (test_benchmark.BenchmarkTests) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 147.224s\n\nOK\n"
+    },
+    {
+      "suite": "benchmark-run",
+      "interpreter": "3.14",
+      "command": [
+        "/private/tmp/dobeworks-degs-review.wxwfNP/venv/bin/python3",
+        "-B",
+        "benchmarks/run_benchmark.py",
+        "--output",
+        "benchmarks/results/apple-silicon-v3.json"
+      ],
+      "started_at": "2026-10-20T21:03:20.900970+00:00",
+      "ended_at": "2026-10-20T21:03:29.415163+00:00",
+      "exit_code": 0,
+      "stdout": "{\"selected\": 318, \"passed\": 318, \"failed\": 0, \"controls_passed\": true}\n",
+      "stderr": ""
+    }
+  ]
+}

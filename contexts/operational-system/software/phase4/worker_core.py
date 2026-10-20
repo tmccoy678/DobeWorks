@@ -16,6 +16,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
+from bounded_input import BoundedInputError, read_regular
+
 
 ENVELOPE_SCHEMA = "dobeworks.job-envelope.v1"
 INPUT_SCHEMA = "dobeworks.synthetic.input.v1"
@@ -26,6 +28,8 @@ MAX_ENVELOPE_BYTES = 64 * 1024
 MAX_RECORDS = 100
 MAX_RECORD_BYTES = 1024 * 1024
 MAX_SEEN_JOBS = 64
+MAX_OUTPUT_DEPTH = 100
+MAX_OUTPUT_NODES = 1024
 ENVELOPE_KEYS = {
     "cancellation", "checkpoint", "configuration_sha256", "data_classes",
     "delivery_intent", "dispatch_authority", "expected_output_sha256",
@@ -132,23 +136,31 @@ def _load_json(raw: bytes, state: str) -> dict:
     return value
 
 
-def _read_regular(path: Path, root: Path, root_identity: tuple, limit: int, limit_state: str) -> bytes:
+def _read_regular(path: Path, root: Path, root_identity: tuple, limit: int, limit_state: str, root_alias=None) -> bytes:
     try:
-        candidate = Path(path)
-        allowed = Path(root)
-        observed = allowed.stat()
-        if allowed.is_symlink() or not allowed.is_dir() or (observed.st_dev, observed.st_ino) != root_identity:
-            raise WorkerRejected("REJECTED_PATH", "allowed input root identity changed")
-        resolved = candidate.resolve(strict=True)
-        if candidate.is_symlink() or (resolved != allowed and allowed not in resolved.parents):
-            raise WorkerRejected("REJECTED_PATH", "input path is outside its allowed root")
-        if not resolved.is_file():
-            raise WorkerRejected("REJECTED_PATH", "input path is not a regular file")
-        if resolved.stat().st_size > limit:
-            raise WorkerRejected(limit_state, "input exceeds its byte limit")
-        return resolved.read_bytes()
-    except (OSError, RuntimeError, TypeError, ValueError) as error:
-        raise WorkerRejected("REJECTED_PATH", "input path cannot be read") from error
+        return read_regular(path, root, root_identity, limit, root_alias)
+    except BoundedInputError as error:
+        state = limit_state if error.limit_exceeded else "REJECTED_PATH"
+        raise WorkerRejected(state, str(error)) from error
+
+
+def _candidate_structure_bounded(value) -> bool:
+    stack, nodes = [(iter((value,)), 1)], 0
+    while stack:
+        children, depth = stack[-1]
+        try:
+            node = next(children)
+        except StopIteration:
+            stack.pop()
+            continue
+        nodes += 1
+        if depth > MAX_OUTPUT_DEPTH or nodes > MAX_OUTPUT_NODES:
+            return False
+        if isinstance(node, dict):
+            stack.append((iter(node.values()), depth + 1))
+        elif isinstance(node, (list, tuple)):
+            stack.append((iter(node), depth + 1))
+    return True
 
 
 def _directory_matches(path: Path, identity: tuple) -> bool:
@@ -215,13 +227,15 @@ class WorkerCore:
             raise ValueError("runner must be callable")
         self.configuration_sha256 = configuration_sha256
         try:
-            resolved_root = Path(allowed_input_root).resolve(strict=True)
+            input_root_alias = Path(allowed_input_root).absolute()
+            resolved_root = input_root_alias.resolve(strict=True)
             root_stat = resolved_root.stat()
             if not resolved_root.is_dir():
                 raise ValueError("allowed input root is not a directory")
         except (OSError, RuntimeError, TypeError, ValueError) as error:
             raise ValueError("allowed input root must identify an existing directory") from error
         self.allowed_input_root = resolved_root
+        self._allowed_input_alias = input_root_alias
         self._allowed_input_identity = (root_stat.st_dev, root_stat.st_ino)
         self.runner = SyntheticInventoryRunner() if runner is None else runner
         self.max_input_bytes = max_input_bytes
@@ -258,7 +272,7 @@ class WorkerCore:
                 raise WorkerRejected("REJECTED_PATH", "staging root must be an existing non-symlink directory")
         except (OSError, RuntimeError, TypeError, ValueError) as error:
             raise WorkerRejected("REJECTED_PATH", "staging root cannot be read") from error
-        envelope_raw = _read_regular(envelope_path, self.allowed_input_root, self._allowed_input_identity, MAX_ENVELOPE_BYTES, "REJECTED_ENVELOPE_LIMIT")
+        envelope_raw = _read_regular(envelope_path, self.allowed_input_root, self._allowed_input_identity, MAX_ENVELOPE_BYTES, "REJECTED_ENVELOPE_LIMIT", self._allowed_input_alias)
         envelope = _load_json(envelope_raw, "REJECTED_INVALID_ENVELOPE")
         self._validate_envelope(envelope, now)
         job_id = envelope["job_id"]
@@ -268,7 +282,7 @@ class WorkerCore:
             raise WorkerRejected(state, "job identity was already observed", job_id)
         if len(self._seen_jobs) >= MAX_SEEN_JOBS:
             raise WorkerRejected("REJECTED_JOB_REGISTRY_LIMIT", "in-memory job registry reached its fixed capacity", job_id)
-        input_raw = _read_regular(input_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes, "REJECTED_INPUT_LIMIT")
+        input_raw = _read_regular(input_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes, "REJECTED_INPUT_LIMIT", self._allowed_input_alias)
         if _sha256(input_raw) != envelope["input_sha256"]:
             raise WorkerRejected("REJECTED_INPUT_IDENTITY", "input digest differs", job_id)
         input_value = _load_json(input_raw, "REJECTED_INVALID_INPUT")
@@ -337,9 +351,6 @@ class WorkerCore:
     def _run_once(self, job: PreparedJob) -> dict:
         try:
             return self._with_deadline(job)
-        except WorkerCancellationRace as error:
-            self._preserve_candidate(job, error.result)
-            return self._fail(job, "AMBIGUOUS_CANCELLATION_RACE", "completion raced with cancellation")
         except WorkerTimeout:
             return self._fail(job, "FAILED_TIMEOUT", "runner reported its bounded timeout")
         except WorkerInterrupted:
@@ -387,10 +398,18 @@ class WorkerCore:
             job.partial_identity = (partial_stat.st_dev, partial_stat.st_ino)
         except OSError as error:
             raise WorkerRejected("FAILED_STAGE_PREPARATION", "partial staging directory could not be created", job.job_id) from error
-        candidate = self.runner(copy.deepcopy(job.envelope), copy.deepcopy(job.input_value))
+        try:
+            candidate = self.runner(copy.deepcopy(job.envelope), copy.deepcopy(job.input_value))
+        except WorkerCancellationRace as error:
+            if not self._staging_matches(job):
+                return _result(job.job_id, "FAILED_STAGE_INTEGRITY", 1, "staging identity changed during execution")
+            self._preserve_candidate(job, error.result)
+            return self._fail(job, "AMBIGUOUS_CANCELLATION_RACE", "completion raced with cancellation")
         if not self._staging_matches(job):
             return _result(job.job_id, "FAILED_STAGE_INTEGRITY", 1, "staging identity changed during execution")
         raw = self._preserve_candidate(job, candidate)
+        if raw is None:
+            return self._fail(job, "FAILED_OUTPUT_VALIDATION", "candidate output cannot be encoded within structural bounds")
         if len(raw) > self.max_output_bytes:
             return self._fail(job, "FAILED_OUTPUT_LIMIT", "candidate output exceeds its byte limit")
         if not self._valid_result(candidate, job):
@@ -400,14 +419,18 @@ class WorkerCore:
             return self._fail(job, "FAILED_OUTPUT_IDENTITY", "candidate output digest differs")
         return self._handback(job, digest)
 
-    def _preserve_candidate(self, job: PreparedJob, candidate) -> bytes:
+    def _preserve_candidate(self, job: PreparedJob, candidate) -> Optional[bytes]:
+        valid = False
         try:
+            if not _candidate_structure_bounded(candidate):
+                raise ValueError("candidate structure exceeds bounds")
             raw = _encoded(candidate)
+            valid = True
         except (RecursionError, TypeError, ValueError):
             raw = b'{"unserializable_candidate":true}\n'
         if len(raw) <= self.max_output_bytes:
             (job.partial / "result.json").write_bytes(raw)
-        return raw
+        return raw if valid else None
 
     def _valid_result(self, value, job: PreparedJob) -> bool:
         keys = {"input_sha256", "job_id", "kinds", "record_count", "schema_version", "total_bytes"}

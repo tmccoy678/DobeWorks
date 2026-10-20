@@ -126,7 +126,7 @@ def measure(files):
 
 def report_run(manifest, files):
     started = datetime.now(timezone.utc).isoformat()
-    inputs = [CANDIDATE, PHASE / 'fixtures/observer-snapshot.json',
+    inputs = [CANDIDATE, PHASE / 'bounded_input.py', PHASE / 'fixtures/observer-snapshot.json',
               PHASE / 'fixtures/observer-policy.json']
     hashes = {str(p.relative_to(ROOT)): digest(p) for p in inputs}
     cases, native = measure(files)

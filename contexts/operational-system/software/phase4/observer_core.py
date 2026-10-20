@@ -11,6 +11,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from bounded_input import BoundedInputError, read_regular
+
 
 SNAPSHOT_SCHEMA = "dobeworks.observer-snapshot.v1"
 POLICY_SCHEMA = "dobeworks.observer-policy.v1"
@@ -118,23 +120,12 @@ def _load(raw: bytes) -> dict:
     return value
 
 
-def _read(path: Path, root: Path, root_identity: tuple, limit: int) -> bytes:
+def _read(path: Path, root: Path, root_identity: tuple, limit: int, root_alias=None) -> bytes:
     try:
-        candidate = Path(path)
-        allowed = Path(root)
-        observed = allowed.stat()
-        if allowed.is_symlink() or not allowed.is_dir() or (observed.st_dev, observed.st_ino) != root_identity:
-            raise ObserverRejected("PATH_REJECTED", "allowed input root identity changed")
-        resolved = candidate.resolve(strict=True)
-        if candidate.is_symlink() or (resolved != allowed and allowed not in resolved.parents):
-            raise ObserverRejected("PATH_REJECTED", "input is outside its allowed root")
-        if not resolved.is_file():
-            raise ObserverRejected("PATH_REJECTED", "input is not a regular file")
-        if resolved.stat().st_size > limit:
-            raise ObserverRejected("INPUT_LIMIT", "input exceeds its byte limit")
-        return resolved.read_bytes()
-    except (OSError, RuntimeError, TypeError, ValueError) as error:
-        raise ObserverRejected("PATH_REJECTED", "input cannot be read") from error
+        return read_regular(path, root, root_identity, limit, root_alias)
+    except BoundedInputError as error:
+        code = "INPUT_LIMIT" if error.limit_exceeded else "PATH_REJECTED"
+        raise ObserverRejected(code, str(error)) from error
 
 
 def _scan_privacy(value) -> None:
@@ -178,21 +169,23 @@ class ObserverCore:
         if not isinstance(max_input_bytes, int) or isinstance(max_input_bytes, bool) or not 1 <= max_input_bytes <= 4 * 1024 * 1024:
             raise ValueError("max_input_bytes is outside the fixed bound")
         try:
-            resolved_root = Path(allowed_input_root).resolve(strict=True)
+            input_root_alias = Path(allowed_input_root).absolute()
+            resolved_root = input_root_alias.resolve(strict=True)
             root_stat = resolved_root.stat()
             if not resolved_root.is_dir():
                 raise ValueError("allowed input root is not a directory")
         except (OSError, RuntimeError, TypeError, ValueError) as error:
             raise ValueError("allowed input root must identify an existing directory") from error
         self.allowed_input_root = resolved_root
+        self._allowed_input_alias = input_root_alias
         self._allowed_input_identity = (root_stat.st_dev, root_stat.st_ino)
         self.max_input_bytes = max_input_bytes
 
     def collect(self, snapshot_path: Path, policy_path: Path, now: str) -> dict:
         """Validate two read-only inputs and return one minimized record."""
         _utc(now)
-        snapshot_raw = _read(snapshot_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes)
-        policy_raw = _read(policy_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes)
+        snapshot_raw = _read(snapshot_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes, self._allowed_input_alias)
+        policy_raw = _read(policy_path, self.allowed_input_root, self._allowed_input_identity, self.max_input_bytes, self._allowed_input_alias)
         snapshot, policy = _load(snapshot_raw), _load(policy_raw)
         _scan_privacy(snapshot)
         _scan_privacy(policy)

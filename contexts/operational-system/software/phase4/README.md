@@ -28,6 +28,13 @@ the synthetic repository-inventory fixture. Authoritative input/output digests
 and the timeout remain pinned inside Worker Core and cannot be changed by an
 injected runner.
 
+Worker and Observer share `bounded_input.py`. Reads open from the pinned
+input-root identity, refuse symlink traversal below that root, validate the
+opened regular-file descriptor, and enforce the byte limit while reading.
+Directory replacement cannot redirect an already opened directory descriptor.
+Concurrent content changes are not an immutable snapshot guarantee; Worker
+still checks the exact input digest, and Observer records the bytes it read.
+
 CLI example, using a disposable staging directory:
 
 ```sh
@@ -87,6 +94,9 @@ python3 -B observer_core.py \
 | Worker retries | 0 |
 | Worker attempts per `execute` call | 1 |
 | Worker remembered job identities per process | 64 |
+| Worker candidate output nesting depth | 100 |
+| Worker candidate output nodes | 1,024 |
+| Input path components below the allowed root | 128 |
 | Envelope timeout value | 1 through 30 seconds |
 | Observer traversed privacy nodes | 256 |
 | Observer signal identities | 6 |
@@ -97,8 +107,10 @@ The synthetic runner has no network, subprocess, credential, device, service,
 or private-content interface. On the tested host, Worker Core uses the main
 thread's interval timer to enforce its in-process deadline and fails closed if
 that timer is unavailable or already occupied. Injected test adapters exercise
-interruption, ambiguity, cancellation-race, and unavailable-dependency states;
-separate-process termination, non-main-thread execution, and device behavior
+interruption, ambiguity, cancellation-race, and unavailable-dependency states.
+Candidate preservation after a cancellation race remains inside the envelope
+deadline. If preservation reaches that deadline, the result is `FAILED_TIMEOUT`.
+Separate-process termination, non-main-thread execution, and device behavior
 remain future integration and qualification evidence. The Observer has no
 remediation, dispatch, promotion, approval, deletion, network, or service
 interface.
