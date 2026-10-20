@@ -1,10 +1,10 @@
 # Figures and reading editions
 
-These dated source editions explain the development snapshots. They preserve the difference between recorded evidence, human approval, current capability, and intended release composition. Some figures retain the private-repository status that was true when they were generated; the root README describes current access.
+These September 11, 2026 source editions explain the development snapshots. They preserve the difference between recorded evidence, human approval, current capability, and intended release composition. Some figures retain the private-repository status that was true when they were generated; the [root README](../../README.md) describes current access.
 
 - **DobeWorks operating architecture:** [PDF](dobeworks-operating-architecture.pdf) · [HTML text equivalent](dobeworks-operating-architecture.html)
 - **The 792-line Phase 2 validator:** [PDF](dobeworks-phase2-validator-code-map.pdf) · [HTML text equivalent](dobeworks-phase2-validator-code-map.html)
-- **The current DEGS core, line by line:** [PDF](degs-core-walkthrough.pdf) · [HTML text equivalent](degs-core-walkthrough.html)
+- **DEGS core, September 11, 2026 source edition:** [PDF](degs-core-walkthrough.pdf) · [HTML text equivalent](degs-core-walkthrough.html)
 - **Trash Pickup and Treasure Pickup:** [PDF](trashpickup-treasurepickup-overview.pdf) · [HTML text equivalent](trashpickup-treasurepickup-overview.html)
 
 The source plates use complete numbered listings followed by explanations. The first page is an A0 poster; use PDF zoom or the HTML equivalent for ordinary reading. Display-only owner-name substitutions are disclosed in the documents. Repository source remains authoritative.

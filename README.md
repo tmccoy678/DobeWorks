@@ -65,7 +65,7 @@ python3 -B -m unittest discover \
 python3 -B -m unittest discover -s benchmarks -p 'test_*.py' -v
 ```
 
-The current suite contains 84 Worker/Observer tests and seven benchmark tests. The [current Observer benchmark](benchmarks/results/apple-silicon-v3.json) records passing outcomes for 318 public JSON inputs and two native controls. The [boundary-fix and verification record](docs/reviews/2026-10-20-boundary-fixes.md) gives the correction scope, commands, and test evidence. These results cover the included synthetic behaviors; they do not prove security, correctness, device support, or production readiness.
+The current suite contains 84 Worker/Observer tests and seven benchmark tests. The [recorded v3 Observer benchmark](benchmarks/results/apple-silicon-v3.json) records passing outcomes for 318 public JSON inputs and two native controls. It predates the [decoder refinement and its verification](https://github.com/tmccoy678/DobeWorks-v2.1/pull/8), which preserves the active Python integer limit and returns structured errors for decoding failures. The [boundary-fix and verification record](docs/reviews/2026-10-20-boundary-fixes.md) gives the earlier correction scope, commands, and test evidence. These results cover the included synthetic behaviors; they do not prove security, correctness, device support, or production readiness.
 
 Historical package-validator tests are separate. They use pinned Git history, and the Phase 4 set also needs the original external specification through `DOBEWORKS_PHASE4_SPEC`. A normal source archive does not contain that historical artifact. See [historical package tests](docs/historical-package-tests.md).
 
