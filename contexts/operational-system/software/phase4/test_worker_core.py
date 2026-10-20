@@ -18,6 +18,7 @@ from pathlib import Path
 from unittest import mock
 
 from worker_core import (
+    MAX_ENVELOPE_BYTES,
     WorkerAmbiguousCompletion,
     WorkerCancellationRace,
     WorkerCore,
@@ -377,11 +378,17 @@ class WorkerCoreTests(unittest.TestCase):
         self.assertEqual(result["state"], "FAILED_OUTPUT_VALIDATION")
         self.assertFalse((self.staging / result["job_id"]).exists())
 
-    def test_deep_json_envelope_is_rejected_without_traceback(self) -> None:
-        self.envelope.write_text("[" * 1500 + "]" * 1500 + "\n", encoding="utf-8")
-        result = self.execute()
-        self.assertEqual(result["state"], "REJECTED_INVALID_ENVELOPE")
-        self.assertEqual(result["attempts"], 0)
+    def test_decoder_errors_are_rejected_without_traceback(self) -> None:
+        cases = ["[" * 1500 + "]" * 1500 + "\n"]
+        limit = getattr(sys, "get_int_max_str_digits", lambda: 0)()
+        if 0 < limit and limit + 1 + len('{"x":}') <= MAX_ENVELOPE_BYTES:
+            cases.append('{"x":' + "9" * (limit + 1) + "}")
+        for raw in cases:
+            with self.subTest(input_bytes=len(raw)):
+                self.envelope.write_text(raw, encoding="utf-8")
+                result = self.execute()
+                self.assertEqual(result["state"], "REJECTED_INVALID_ENVELOPE")
+                self.assertEqual(result["attempts"], 0)
 
     def test_boolean_numeric_controls_are_rejected(self) -> None:
         for field in ("timeout_seconds", "retry_limit"):

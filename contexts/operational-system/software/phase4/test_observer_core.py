@@ -248,10 +248,16 @@ class ObserverCoreTests(unittest.TestCase):
         with self.assertRaisesRegex(ObserverRejected, "DUPLICATE_KEY"):
             self.collect()
 
-    def test_deep_json_is_rejected_without_traceback(self) -> None:
-        self.snapshot.write_text("[" * 1500 + "]" * 1500 + "\n", encoding="utf-8")
-        with self.assertRaisesRegex(ObserverRejected, "INVALID_JSON"):
-            self.collect()
+    def test_decoder_errors_are_rejected_without_traceback(self) -> None:
+        cases = ["[" * 1500 + "]" * 1500 + "\n"]
+        limit = getattr(sys, "get_int_max_str_digits", lambda: 0)()
+        if 0 < limit and limit + 1 + len('{"x":}') <= self.core().max_input_bytes:
+            cases.append('{"x":' + "9" * (limit + 1) + "}")
+        for raw in cases:
+            with self.subTest(input_bytes=len(raw)):
+                self.snapshot.write_text(raw, encoding="utf-8")
+                with self.assertRaisesRegex(ObserverRejected, "INVALID_JSON"):
+                    self.collect()
 
     def test_stale_snapshot_never_implies_health(self) -> None:
         self.mutate_snapshot(sampled_at="2026-09-05T23:00:00Z")
