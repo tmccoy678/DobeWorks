@@ -13,9 +13,9 @@ import command_center as ui
 
 
 class InterfaceTests(unittest.TestCase):
-    def test_default_gate_is_v3_with_explicit_checkout_override(self):
+    def test_default_gate_uses_plain_name_with_explicit_checkout_override(self):
         default = ui.parse_args(["degs", "tier2-complete-pass.json"])
-        self.assertEqual(default.degs_root, ui.ROOT.parent / "DEGS-v3.0")
+        self.assertEqual(default.degs_root, ui.ROOT.parent / "DEGS")
         custom = Path("custom-degs-checkout")
         selected = ui.parse_args(["--degs-root", str(custom), "degs", "tier2-complete-pass.json"])
         self.assertEqual(selected.degs_root, custom)

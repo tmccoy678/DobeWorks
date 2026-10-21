@@ -1,4 +1,4 @@
-"""Run the shared adapter against the actual DEGS v3.0 warning gate."""
+"""Run the shared adapter against the actual DEGS warning gate."""
 
 import json
 import os
@@ -13,11 +13,11 @@ class DegsWarningContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         selected = os.environ.get("DOBEWORKS_DEGS_ROOT")
-        cls.degs_root = Path(selected).expanduser().resolve() if selected else ui.ROOT.parent / "DEGS-v3.0"
+        cls.degs_root = Path(selected).expanduser().resolve() if selected else ui.ROOT.parent / "DEGS"
         if not (cls.degs_root / "bin" / "engineering-gate.py").is_file():
             if selected:
                 raise RuntimeError("DOBEWORKS_DEGS_ROOT must identify a DEGS checkout")
-            raise unittest.SkipTest("DEGS-v3.0 sibling unavailable; set DOBEWORKS_DEGS_ROOT")
+            raise unittest.SkipTest("DEGS sibling unavailable; set DOBEWORKS_DEGS_ROOT")
 
     def evaluate(self, task):
         previous_root = ui.DEGS
