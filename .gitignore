@@ -4,3 +4,5 @@
 !.env.example
 node_modules/
 references/private/
+interface/Runs/
+interface/__pycache__/

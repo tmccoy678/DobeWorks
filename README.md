@@ -55,6 +55,17 @@ python3 -B contexts/operational-system/software/phase4/worker_core.py \
 
 The expected state is `COMPLETED_UNACCEPTED`. Inspect the staged files, then remove the disposable directory when finished. The [software-core guide](contexts/operational-system/software/phase4/README.md) explains the checks and limits.
 
+## Shared interface
+
+The optional [shared terminal interface](interface/README.md) brings DobeWorks and DEGS into one menu with the blue display, quoted voices, and result screens shown above. From this checkout, place the DEGS clone alongside it and launch:
+
+```sh
+git clone https://github.com/tmccoy678/DEGS-v2.1.git ../DEGS-v2.1
+python3 -B interface/command_center.py menu
+```
+
+On macOS, run `zsh DobeWorks.command` for the Courier window settings; the [setup guide](interface/README.md) also explains Finder double-click setup and `--degs-root` for an existing DEGS checkout. The interface calls the existing core CLIs and writes local evidence under ignored `interface/Runs/`. Its integration result checks the synthetic adapter mapping; it grants no acceptance, promotion, or execution authority.
+
 ## Tests
 
 The ordinary public tests use only the checkout and Python standard library:
@@ -64,6 +75,8 @@ python3 -B -m unittest discover \
   -s contexts/operational-system/software/phase4 -p 'test_*_core.py' -v
 python3 -B -m unittest discover -s benchmarks -p 'test_*.py' -v
 ```
+
+The shared interface has a separate focused suite: `python3 -B -m unittest discover -s interface -p 'test_*.py' -v`.
 
 The current suite contains 84 Worker/Observer tests and seven benchmark tests. The [recorded v3 Observer benchmark](benchmarks/results/apple-silicon-v3.json) records passing outcomes for 318 public JSON inputs and two native controls. It predates the [decoder refinement and its verification](https://github.com/tmccoy678/DobeWorks-v2.1/pull/8), which preserves the active Python integer limit and returns structured errors for decoding failures. The [boundary-fix and verification record](docs/reviews/2026-10-20-boundary-fixes.md) gives the earlier correction scope, commands, and test evidence. These results cover the included synthetic behaviors; they do not prove security, correctness, device support, or production readiness.
 
