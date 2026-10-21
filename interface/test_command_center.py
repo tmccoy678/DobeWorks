@@ -13,6 +13,13 @@ import command_center as ui
 
 
 class InterfaceTests(unittest.TestCase):
+    def test_default_gate_is_v3_with_explicit_checkout_override(self):
+        default = ui.parse_args(["degs", "tier2-complete-pass.json"])
+        self.assertEqual(default.degs_root, ui.ROOT.parent / "DEGS-v3.0")
+        custom = Path("custom-degs-checkout")
+        selected = ui.parse_args(["--degs-root", str(custom), "degs", "tier2-complete-pass.json"])
+        self.assertEqual(selected.degs_root, custom)
+
     def integration(self, stale=None, worker=None):
         snapshot = json.loads((ui.PHASE4 / "fixtures/observer-snapshot.json").read_text())
         fresh = {"schema_version": "dobeworks.observer-record.v1", "role_id": snapshot["role_id"],

@@ -1,0 +1,100 @@
+{
+  "evidence_id": "DOBEWORKS-V3-WARNING-INPUT-INTEGRATION-2026-10-21",
+  "scope": "Final frontend verification against the frozen sibling DEGS candidate, including warning, exact-numeric-input, and Unicode corrections in that candidate",
+  "configuration": {
+    "python_version": "3.9.6",
+    "system": "Darwin",
+    "machine": "arm64",
+    "cwd": "DobeWorks-v3.0 repository root",
+    "degs_root": "../DEGS-v3.0",
+    "DobeWorks_base_commit": "92d49f1c3f7505605e276322ba06bc2b19983d73",
+    "DEGS_base_commit": "30c93fa6bb05bad56504d8b666ea407491be7720"
+  },
+  "execution": {
+    "argv": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "interface",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "command": "python3 -B -m unittest discover -s interface -p 'test_*.py' -v",
+    "timeout_seconds": 120,
+    "start_time_utc": "2026-10-21T03:09:15.888964+00:00",
+    "end_time_utc": "2026-10-21T03:09:16.181795+00:00",
+    "elapsed_monotonic_seconds": 0.292733125,
+    "clock_quality": "Local host UTC wall clock; monotonic elapsed time; no independent synchronization measurement",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_default_gate_is_v3_with_explicit_checkout_override (test_command_center.InterfaceTests) ... ok\ntest_degs_demo_requires_expected_decision (test_command_center.InterfaceTests) ... ok\ntest_evidence_omits_credentials_and_unperformed_pass_claims (test_command_center.InterfaceTests) ... ok\ntest_integration_requires_actual_source_states (test_command_center.InterfaceTests) ... ok\ntest_subprocess_rejects_malformed_output_and_stderr (test_command_center.InterfaceTests) ... ok\ntest_verification_requires_executed_tests (test_command_center.InterfaceTests) ... ok\ntest_voice_bank_retains_three_voices_and_quoted_header (test_command_center.InterfaceTests) ... ok\ntest_contradictory_resolution_cannot_pass_through_shared_adapter (test_degs_warning_contract.DegsWarningContractTests) ... ok\ntest_recorded_closure_preserves_clean_readiness_through_shared_adapter (test_degs_warning_contract.DegsWarningContractTests) ... ok\ntest_unresolved_item_blocks_tier0_through_shared_adapter (test_degs_warning_contract.DegsWarningContractTests) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.231s\n\nOK\n"
+  },
+  "artifact_sha256_before": {
+    "DobeWorks-v3.0": {
+      "interface/command_center.py": "e652c4cfe979d6f25c1e8ab3eff089ebd3160425ae4fa8630d13d5a08e3dd96f",
+      "interface/test_command_center.py": "c8d445e0a7e4e072a2f6b71cd8ffa6dfa24af30383f21e32a32a470cf25fabee",
+      "interface/test_degs_warning_contract.py": "054547ac2c7626bd8a86f23ca7c75eeb405268a230383dd9d736028e2b9d4104",
+      "interface/README.md": "73e3cfdd0828fc931d7337c87b79bb03462230cf24570d63e8c1986f8ba314dc"
+    },
+    "DEGS-v3.0": {
+      "bin/engineering-gate.py": "ed5e485b1e2e50e5d3ff5eb8b49b5cab10e442928425666ca850266d41771ce0",
+      "gate.schema.json": "ba69b11b2e164babd54a55576f3fb023ede4468955fbb16d897b42ffb03a2892",
+      "fixtures/tier0-readonly-pass.json": "5e8f6f123627a5a5347d0c4923abf42e5b609ca5dd431086eb10a53c05f0b769"
+    }
+  },
+  "artifact_sha256_after": {
+    "DobeWorks-v3.0": {
+      "interface/command_center.py": "e652c4cfe979d6f25c1e8ab3eff089ebd3160425ae4fa8630d13d5a08e3dd96f",
+      "interface/test_command_center.py": "c8d445e0a7e4e072a2f6b71cd8ffa6dfa24af30383f21e32a32a470cf25fabee",
+      "interface/test_degs_warning_contract.py": "054547ac2c7626bd8a86f23ca7c75eeb405268a230383dd9d736028e2b9d4104",
+      "interface/README.md": "73e3cfdd0828fc931d7337c87b79bb03462230cf24570d63e8c1986f8ba314dc"
+    },
+    "DEGS-v3.0": {
+      "bin/engineering-gate.py": "ed5e485b1e2e50e5d3ff5eb8b49b5cab10e442928425666ca850266d41771ce0",
+      "gate.schema.json": "ba69b11b2e164babd54a55576f3fb023ede4468955fbb16d897b42ffb03a2892",
+      "fixtures/tier0-readonly-pass.json": "5e8f6f123627a5a5347d0c4923abf42e5b609ca5dd431086eb10a53c05f0b769"
+    }
+  },
+  "artifact_bytes_unchanged_during_test": true,
+  "expected_result": {
+    "exit_code": 0,
+    "tests_run": 10,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "prior_single_current_pair_integration": {
+    "observation_source": "Earlier single actual CLI run during this change; captured tool output",
+    "command": "python3 -B interface/command_center.py --runs-root <temporary-directory> integration",
+    "start_time": "NOT RECORDED",
+    "end_time": "NOT RECORDED",
+    "exit_code": 0,
+    "stderr": "",
+    "mappings": {
+      "fresh_observer": "PASS",
+      "stale_observer": "BLOCKED",
+      "unaccepted_worker": "BLOCKED"
+    },
+    "artifact_retention": "Temporary run artifacts were removed after the output was checked",
+    "relation_to_final_run": "This integration run preceded the final DEGS Unicode correction; the final frontend suite below is a separate observation"
+  },
+  "limitations": [
+    "The final suite includes three actual DEGS CLI warning cases; other frontend cases use their existing mocks.",
+    "This frontend suite does not directly test the numeric or Unicode counterexamples; DEGS core tests own those cases.",
+    "Recorded closure evidence is a reference whose truth is not authenticated.",
+    "Publication, independent review, and final Git identity binding are outside this pre-delivery observation."
+  ],
+  "actual_result": {
+    "tests_run": 10,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "unittest_reported_seconds": 0.231,
+    "status": "PASS",
+    "decision_scope": "RECORDED_FRONTEND_TEST_EXECUTION"
+  }
+}
