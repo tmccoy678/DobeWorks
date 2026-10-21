@@ -1,4 +1,4 @@
-# DobeWorks v2.1
+# DobeWorks v3.0
 
 ![DobeWorks command center running the current DobeWorks and DEGS cores](docs/figures/dobeworks-degs-command-center.png)
 
