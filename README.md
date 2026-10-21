@@ -1,6 +1,6 @@
 # DobeWorks
 
-![DobeWorks and DEGS shared terminal interface](docs/figures/dobeworks-degs-command-center.png)
+![DobeWorks and DEGS shared terminal interface](docs/figures/DobeWorks_UI.jpg)
 
 DobeWorks provides a bounded Worker and a read-only Observer. The shared terminal interface runs both alongside [DEGS](https://github.com/tmccoy678/DEGS), the engineering evidence gate.
 
