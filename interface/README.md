@@ -7,9 +7,9 @@ This optional interface reuses Taylor's Desktop Command Center design: the blue-
 Use Git and Python 3.9 or later. No Python packages or system installation are needed. Clone both public repositories into the same parent directory:
 
 ```sh
-git clone https://github.com/tmccoy678/DobeWorks-v2.1.git
-git clone https://github.com/tmccoy678/DEGS-v2.1.git
-cd DobeWorks-v2.1
+git clone https://github.com/tmccoy678/DobeWorks-v3.0.git
+git clone https://github.com/tmccoy678/DEGS-v3.0.git
+cd DobeWorks-v3.0
 python3 -B interface/command_center.py menu
 ```
 
@@ -18,7 +18,7 @@ On macOS, run `zsh DobeWorks.command` from Terminal in the DobeWorks checkout. T
 For an existing DEGS clone with another name or location, put the option before the command:
 
 ```sh
-python3 -B interface/command_center.py --degs-root /path/to/DEGS-v2.1 menu
+python3 -B interface/command_center.py --degs-root /path/to/DEGS-v3.0 menu
 ```
 
 The interface requires Git checkouts with an `origin` remote and checks them before running a demonstration. Source archives are not supported by this launcher. Repository paths are resolved from the interface's location; no Taylor-specific home path or Desktop dependency is included.
@@ -53,12 +53,26 @@ Exit `0` means that demonstration matched its expected result, including the int
 
 The interface supplies the DEGS task record because the cores do not define a shared wire format. Copied template controls are marked `PENDING` rather than inheriting fixture `PASS` assertions as measured test evidence. A mapping passes only when the actual source state and the gate's validation, exit, and decision match the stated expectations. Duplicate-key, nonfinite, malformed, or non-object child JSON and unexpected diagnostics are interface errors. This is a synthetic adapter check. It does not accept or promote output, operate a device, establish evidence truth, authorize work, or qualify the system for production.
 
+### Warning readiness in v3.0
+
+The default gate is the sibling `DEGS-v3.0` checkout. Keep that checkout current to receive the warning-readiness corrections. An explicit `--degs-root` selects that checkout's own gate behavior.
+
+The adapter preserves the full DEGS evaluation response, including its derived `warning_state` and numbered, sanitized `warnings` entries. Any active record in `warnings` or `unresolved_items` makes the aggregate unresolved count nonzero, severity `CRITICAL`, status `UNRESOLVED`, and `resolved: false`, and blocks readiness at every tier. Counts come from the recorded items; callers cannot supply a zero count to suppress them.
+
+A closed warning requires `severity: "NONE"`, `status: "RESOLVED"`, `resolved: true`, and a nonblank `evidence_path` for the recorded closure. Resolved records belong in `warnings` history; `unresolved_items` contains active records only. Conflicting fields and malformed values, including `"CRITICAL "`, fail validation. The gate checks the closure reference's presence; the referenced evidence's truth remains unverified. Zero unresolved items leaves the other gate requirements in effect.
+
 Core verification runs the existing Worker/Observer and DEGS core/port suites. It preserves their full output and requires a successful unittest summary with at least one executed, non-skipped test per core. It does not run benchmarks, historical package validators, or the optional Rust comparison. Historical Phase 4 package checks still require the separate specification named by `DOBEWORKS_PHASE4_SPEC`.
 
 The frontend's focused checks are separate:
 
 ```sh
 python3 -B -m unittest discover -s interface -p 'test_*.py' -v
+```
+
+The warning contract tests run the actual sibling DEGS CLI through `run_degs_task`, checking a blocked active item, rejected conflicting resolution, and a passing recorded closure. They skip when no sibling `DEGS-v3.0` checkout is available. To test another checkout explicitly, set `DOBEWORKS_DEGS_ROOT`; an invalid explicit path fails the tests:
+
+```sh
+DOBEWORKS_DEGS_ROOT=/path/to/DEGS-v3.0 python3 -B -m unittest discover -s interface -p test_degs_warning_contract.py -v
 ```
 
 ## Voices and design sources
