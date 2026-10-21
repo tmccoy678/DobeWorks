@@ -20,7 +20,7 @@ from urllib.parse import urlsplit, urlunsplit
 SUPPORT = Path(__file__).resolve().parent
 ROOT = SUPPORT.parent
 DOBEWORKS = ROOT
-DEGS = ROOT.parent / "DEGS-v3.0"
+DEGS = ROOT.parent / "DEGS"
 PHASE4 = DOBEWORKS / "contexts" / "operational-system" / "software" / "phase4"
 RUNS = SUPPORT / "Runs"
 VOICE_BANK = SUPPORT / "workbench-voices.json"
@@ -841,7 +841,7 @@ def menu() -> int:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--degs-root", type=Path, default=DEGS, help="DEGS Git checkout (default: sibling DEGS-v3.0)")
+    parser.add_argument("--degs-root", type=Path, default=DEGS, help="DEGS Git checkout (default: sibling DEGS)")
     parser.add_argument("--runs-root", type=Path, default=RUNS, help="local output directory (default: interface/Runs)")
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("menu")
