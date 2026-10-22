@@ -90,15 +90,68 @@ class InterfaceTests(unittest.TestCase):
                      contextlib.redirect_stdout(io.StringIO()):
                     self.assertEqual(ui.show_degs_fixture("tier2-complete-pass.json"), expected)
 
-    def test_voice_bank_retains_three_voices_and_quoted_header(self):
+    def test_voice_bank_contains_only_verified_outputs_for_three_voices(self):
         entries = json.loads(ui.VOICE_BANK.read_text(encoding="utf-8"))
-        self.assertEqual(len(entries), 100)
-        self.assertEqual({item["speaker"] for item in entries}, {"ELIZA", "COLOSSUS", "GUARDIAN"})
+        self.assertEqual(len(entries), 6)
+        speakers = {"ELIZA", "COLOSSUS", "COLOSSUS + GUARDIAN"}
+        self.assertEqual({item["speaker"] for item in entries}, speakers)
+        self.assertEqual(
+            {speaker: sum(item["speaker"] == speaker for item in entries)
+             for speaker in speakers},
+            {"ELIZA": 2, "COLOSSUS": 2, "COLOSSUS + GUARDIAN": 2},
+        )
+        for item in entries:
+            self.assertEqual(item["verification"], "primary-source-verified")
+            self.assertTrue(item["source"])
+            self.assertTrue(item["locator"])
+            self.assertRegex(item["source_sha256"], r"^[0-9a-f]{64}$")
+            self.assertNotEqual(item.get("origin"), "Original workbench line")
         with patch.object(ui, "choose_workbench_voice", return_value=("COLOSSUS", "TEST LINE.", "· COLOSSUS")), \
              contextlib.redirect_stdout(io.StringIO()) as output:
             ui.print_header()
         self.assertIn("“TEST LINE.”", output.getvalue())
         self.assertIn("· COLOSSUS", output.getvalue())
+
+    def test_voice_bank_rejects_missing_primary_source_provenance(self):
+        entries = [
+            {
+                "speaker": speaker,
+                "text": f"VERIFIED LINE {index}.",
+                "attribution": f"· {speaker}",
+                "verification": "primary-source-verified",
+                "source": "Primary source",
+                "locator": "Exact locator",
+                "source_sha256": "0" * 64,
+            }
+            for speaker in ("ELIZA", "COLOSSUS", "COLOSSUS + GUARDIAN")
+            for index in (1, 2)
+        ]
+        del entries[0]["locator"]
+        with tempfile.TemporaryDirectory() as directory:
+            bank = Path(directory) / "voices.json"
+            bank.write_text(json.dumps(entries), encoding="utf-8")
+            with patch.object(ui, "VOICE_BANK", bank), self.assertRaises(RuntimeError):
+                ui.load_workbench_voices()
+
+    def test_voice_bank_rejects_invalid_source_hash(self):
+        entries = [
+            {
+                "speaker": speaker,
+                "text": f"VERIFIED LINE {index}.",
+                "attribution": f"· {speaker}",
+                "verification": "primary-source-verified",
+                "source": "Primary source",
+                "locator": "Exact locator",
+                "source_sha256": "not-a-sha256",
+            }
+            for speaker in ("ELIZA", "COLOSSUS", "COLOSSUS + GUARDIAN")
+            for index in (1, 2)
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            bank = Path(directory) / "voices.json"
+            bank.write_text(json.dumps(entries), encoding="utf-8")
+            with patch.object(ui, "VOICE_BANK", bank), self.assertRaises(RuntimeError):
+                ui.load_workbench_voices()
 
     def test_subprocess_rejects_malformed_output_and_stderr(self):
         import sys
