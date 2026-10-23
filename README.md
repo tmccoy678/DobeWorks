@@ -21,11 +21,27 @@ Choose **01** for the paired demonstration, **07** to check both cores, or **00*
 
 [Interface guide and command reference](interface/README.md) · [Worker and Observer details](contexts/operational-system/software/phase4/README.md)
 
+## Governed live-worker path
+
+The current tree also contains an experimental provider-neutral live-worker
+path. An external Adapter proposes bounded operations while DobeWorks owns the
+fixed workflow, executes only envelope-authorized reads, structured edits, and
+checks, and stages an atomic `COMPLETED_UNACCEPTED` handback. Its append-only
+handoff stream can be watched directly as parallel agent and controller lanes.
+
+[Architecture, command contract, live handoff viewer, limitations, and tests](contexts/operational-system/software/live_worker/README.md)
+
 ## Initial release
 
 This release contains the implemented synthetic Worker and Observer cores, the shared interface, examples, tests, and supporting documentation. Its Git tag is `initial-release-final`. Internal policy, phase, correction-generation, and benchmark numbers keep their existing meanings.
 
-The Sashiko/Live-SWE executor is proposed follow-up work. The current examples do not operate a device, grant execution authority, or qualify a production system. Source archives are available with the release; the shared interface requires Git clones with an `origin` remote.
+The tagged initial release did not contain a live Sashiko/agent executor. The
+experimental path in the current tree composes selected Sashiko-derived review
+value operations with a new DobeWorks controller; it is not the complete
+upstream workflow. No current example operates a device, accepts or promotes a
+candidate, grants execution authority, or qualifies a production system.
+Source archives are available with the release; the shared interface requires
+Git clones with an `origin` remote.
 
 ## Evidence and documentation
 

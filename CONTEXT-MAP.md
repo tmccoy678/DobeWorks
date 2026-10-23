@@ -10,6 +10,7 @@
 - **Operational System → DobeWorks**: The Operational System belongs to DobeWorks and inherits its source-publication and identity boundaries without redefining the name or identity.
 - **Operational System ↔ Taylor AI Workbench and Command Center**: Historical program records refer to external supervised implementation and routing interfaces; this repository does not include or redefine them.
 - **Operational System → DEGS**: The Operational System supplies task records and evidence to the external [DEGS repository](https://github.com/tmccoy678/DEGS-v2.1); it does not copy DEGS policy or treat a gate result as execution authority.
+- **Governed live worker → Operational System and DEGS**: The experimental live-worker Module belongs to the Operational System. It invokes exact-identity DEGS gate and review-adapter files without importing DEGS policy or converting readiness into candidate acceptance.
 
 ## Decision placement
 
