@@ -40,6 +40,8 @@ I will briefly introduce Dobeworks and DEGS. First, DobeWorks and DEGS were orig
 
 I am aware that it is impossible to eliminate errors. It follows then that DobeWorks and DEGS do not try to fix errors; and one strength of the systems is their ability to prevent errors from moving forward into the next ticket or part of the work.
 
+For a time, I used DobeWorks and DEGS in front of every message entering my regular Codex terminal. As I made the governance more exacting, ordinary work became buried under gate preparation. I created a separate external clean Workbench lane to regain balance. That history explains why a Tier 2 record with required human approval marked `REJECTED` was once allowed to return `PASS`, but it was not a truthful gate result and has been corrected in DEGS. A proper Doberman is resolute, quiet, and poised in the house; it does not need to splash in a river to prove that it is moving. DobeWorks should remain an umbrella over AI while applying governance in proportion to the work.
+
 DobeWorks and DEGS are my personal engineering system for methodological systems, software, research infrastructure, and special projects.
 
 If you would like to discuss DobeWorks and/or DEGS privately, please email me at: tmccoy678@gmail.com.
