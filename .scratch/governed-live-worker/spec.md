@@ -60,7 +60,8 @@ evaluation timestamp—establish event order.
   represented as clean, and self-promotion.
 - Process boundary cases: direct source read and unrelated home-file read are
   denied; agent identity bytes are hash-bound and staged before execution; a
-  forked descendant cannot survive the end of a turn.
+  process-group or session escape cannot occur because Adapter, check, and DEGS
+  subprocesses execute under a Seatbelt profile that denies `process-fork`.
 - Parser boundary cases: malformed, deeply nested, non-finite, duplicate, and
   diagnostic-bearing structured subprocess results fail closed, and DEGS
   output is capped while it is produced rather than after in-memory capture.

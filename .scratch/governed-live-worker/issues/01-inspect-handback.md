@@ -21,8 +21,12 @@ non-success result.
 - 2026-10-23: Public seam confirmed by Taylor. Baselines: DobeWorks 84 passing;
   DEGS 103 passing and one expected interpreter-specific skip.
 - 2026-10-23: Implemented and verified through the public CLI. The final
-  package run passed 27 live-worker/handoff cases, 84 existing core cases, and
+  package run passed 33 live-worker/handoff cases, 84 existing core cases, and
   12 existing interface cases. The companion DEGS suite passed 109 cases with
   its one expected Python 3.9 skip. The deterministic PROCESS Adapter demo
   produced 17 contiguous handoff records and stopped at the human-acceptance
   boundary with promotion `NOT_PERFORMED`.
+- 2026-10-23: Independent review proved that process-group termination alone
+  did not contain a child that called `setsid()`. Adapter, check, and DEGS
+  invocations now deny `process-fork` under Seatbelt, with three adversarial
+  regressions that attempt the exact fork-and-session escape.

@@ -193,6 +193,33 @@ def bounded_agent_source(source_file: Path, private_file: Path) -> str:
     )
 
 
+def session_escape_agent_source() -> str:
+    return (
+        "import json,os,sys,time\n"
+        "request=json.load(sys.stdin)\n"
+        "stage=request['stage']; history=request['history']\n"
+        "if stage == 'inspect' and not history:\n"
+        "  read_fd,write_fd=os.pipe()\n"
+        "  try:\n"
+        "    child=os.fork()\n"
+        "  except PermissionError:\n"
+        "    os.close(read_fd); os.close(write_fd); child=None\n"
+        "  else:\n"
+        "    if child == 0:\n"
+        "      os.close(read_fd); os.setsid(); os.write(write_fd,b'1'); "
+        "os.close(write_fd); time.sleep(30); os._exit(0)\n"
+        "    os.close(write_fd); os.read(read_fd,1); os.close(read_fd)\n"
+        "  path='README.txt' if child is None else f'pid-{child}'\n"
+        "  action={'operation':'read_file','path':path}\n"
+        "elif stage == 'review':\n"
+        "  action={'operation':'finish_stage','summary':'Reviewed.',"
+        "'concerns':[],'dismissed_concerns':[]}\n"
+        "else:\n"
+        "  action={'operation':'finish_stage','summary':'Stage complete.'}\n"
+        "print(json.dumps(action))\n"
+    )
+
+
 def process_config(agent: Path) -> dict:
     return {
         "schema_version": "dobeworks.process-agent/v1",
@@ -645,6 +672,47 @@ class GovernedLiveWorkerCliTests(unittest.TestCase):
         self.assertEqual(json.loads(completed.stdout)["state"], "FAILED_DEGS")
         self.assertFalse((self.staging / "job-inspect-001").exists())
 
+    def test_degs_subprocess_cannot_fork_and_escape_its_session(self) -> None:
+        self.gate.write_text(
+            "import json,os,time\n"
+            "read_fd,write_fd=os.pipe()\n"
+            "try:\n"
+            "  child=os.fork()\n"
+            "except PermissionError:\n"
+            "  os.close(read_fd); os.close(write_fd); child=None\n"
+            "else:\n"
+            "  if child == 0:\n"
+            "    os.close(read_fd); os.setsid(); os.write(write_fd,b'1'); "
+            "os.close(write_fd); time.sleep(30); os._exit(0)\n"
+            "  os.close(write_fd); os.read(read_fd,1); os.close(read_fd)\n"
+            "print(json.dumps({'decision':'PASS','warning_state':"
+            "{'unresolved_count':0,'status':'RESOLVED','resolved':True},"
+            "'escaped_pid':child}))\n",
+            encoding="utf-8",
+        )
+        self.mutate_envelope(
+            lambda value: value["degs"].update(
+                {"gate_sha256": sha256_file(self.gate)}
+            )
+        )
+        escaped_pid = None
+        try:
+            completed = self.run_job()
+            self.assertEqual(completed.returncode, 0, completed.stderr or completed.stdout)
+            result = json.loads(
+                (self.staging / "job-inspect-001" / "degs-result.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            escaped_pid = result["escaped_pid"]
+            self.assertIsNone(escaped_pid, "DEGS was allowed to create a new session")
+        finally:
+            if escaped_pid is not None:
+                try:
+                    os.kill(escaped_pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+
     def test_check_subprocess_receives_no_ambient_home_environment(self) -> None:
         def configure_envelope(value) -> None:
             value["permissions"]["check_ids"] = ["clean-environment"]
@@ -672,6 +740,62 @@ class GovernedLiveWorkerCliTests(unittest.TestCase):
         )
         completed = self.run_job()
         self.assertEqual(completed.returncode, 0, completed.stderr or completed.stdout)
+
+    def test_check_subprocess_cannot_fork_and_escape_its_session(self) -> None:
+        check_source = (
+            "import os,time\n"
+            "read_fd,write_fd=os.pipe()\n"
+            "try:\n"
+            "  child=os.fork()\n"
+            "except PermissionError:\n"
+            "  os.close(read_fd); os.close(write_fd); print('fork-denied')\n"
+            "else:\n"
+            "  if child == 0:\n"
+            "    os.close(read_fd); os.setsid(); os.write(write_fd,b'1'); "
+            "os.close(write_fd); time.sleep(30); os._exit(0)\n"
+            "  os.close(write_fd); os.read(read_fd,1); os.close(read_fd); print(child)\n"
+        )
+
+        def configure_envelope(value) -> None:
+            value["permissions"]["check_ids"] = ["no-descendants"]
+            value["checks"] = {
+                "no-descendants": {
+                    "argv": [sys.executable, "-B", "-c", check_source],
+                    "timeout_seconds": 5,
+                }
+            }
+
+        self.mutate_envelope(configure_envelope)
+        self.mutate_script(
+            lambda value: value["stages"].update(
+                {
+                    "execute_check": [
+                        {"operation": "run_check", "check_id": "no-descendants"},
+                        {"operation": "finish_stage", "summary": "Check completed."},
+                    ]
+                }
+            )
+        )
+        escaped_pid = None
+        try:
+            completed = self.run_job()
+            self.assertEqual(completed.returncode, 0, completed.stderr or completed.stdout)
+            stdout = (
+                self.staging
+                / "job-inspect-001"
+                / ".process"
+                / "no-descendants"
+                / "stdout"
+            ).read_text(encoding="utf-8").strip()
+            if stdout.isdigit():
+                escaped_pid = int(stdout)
+            self.assertEqual(stdout, "fork-denied")
+        finally:
+            if escaped_pid is not None:
+                try:
+                    os.kill(escaped_pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
     def test_successful_check_with_standard_error_fails(self) -> None:
         def configure_envelope(value) -> None:
@@ -767,18 +891,9 @@ class GovernedLiveWorkerCliTests(unittest.TestCase):
         self.assertEqual(events[-1]["event"], "adapter_failed")
         self.assertEqual(events[-1]["details"]["state"], "FAILED_ADAPTER")
 
-    def test_process_adapter_cannot_leave_a_descendant_running(self) -> None:
+    def test_process_adapter_cannot_fork_and_escape_its_session(self) -> None:
         agent = self.root / "forking-agent.py"
-        agent.write_text(
-            "import json,os,sys,time\n"
-            "json.load(sys.stdin)\n"
-            "child=os.fork()\n"
-            "if child == 0:\n"
-            "  time.sleep(30)\n"
-            "  os._exit(0)\n"
-            "print(json.dumps({'operation':'read_file','path':f'pid-{child}'}))\n",
-            encoding="utf-8",
-        )
+        agent.write_text(session_escape_agent_source(), encoding="utf-8")
         config = self.root / "process-agent.json"
         write_json(config, process_config(agent))
         self.mutate_envelope(
@@ -791,23 +906,34 @@ class GovernedLiveWorkerCliTests(unittest.TestCase):
                 }
             )
         )
-        completed = self.run_job("--agent-process", config)
-        self.assertEqual(completed.returncode, 2)
-        journal = self.staging / ".partial-job-inspect-001" / "handoffs.jsonl"
-        events = [json.loads(line) for line in journal.read_text(encoding="utf-8").splitlines()]
-        proposal = next(item for item in events if item["event"] == "operation_proposed")
-        child_pid = int(proposal["details"]["path"].removeprefix("pid-"))
-        alive = True
-        for _ in range(20):
-            try:
-                os.kill(child_pid, 0)
-            except ProcessLookupError:
-                alive = False
-                break
-            time.sleep(0.05)
-        if alive:
-            os.kill(child_pid, signal.SIGKILL)
-        self.assertFalse(alive, "Adapter descendant survived the completed turn")
+        escaped_pid = None
+        try:
+            completed = self.run_job("--agent-process", config)
+            journal_root = (
+                self.staging / "job-inspect-001"
+                if completed.returncode == 0
+                else self.staging / ".partial-job-inspect-001"
+            )
+            events = [
+                json.loads(line)
+                for line in (journal_root / "handoffs.jsonl").read_text(
+                    encoding="utf-8"
+                ).splitlines()
+            ]
+            proposal = next(
+                item for item in events if item["event"] == "operation_proposed"
+            )
+            proposed_path = proposal["details"]["path"]
+            if proposed_path.startswith("pid-"):
+                escaped_pid = int(proposed_path.removeprefix("pid-"))
+            self.assertEqual(completed.returncode, 0, completed.stderr or completed.stdout)
+            self.assertEqual(proposed_path, "README.txt")
+        finally:
+            if escaped_pid is not None:
+                try:
+                    os.kill(escaped_pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
 
 if __name__ == "__main__":

@@ -26,8 +26,9 @@ execution protocol.
   signature.
 - An agent cannot acquire direct project access merely because it runs locally;
   project operations remain controller-mediated.
-- Each subprocess invocation owns a fresh process group that is terminated at
-  the end of the bounded turn, including after a nominally successful parent.
+- Adapter, check, and DEGS invocations are single-process Seatbelt jobs:
+  `process-exec` is allowed and `process-fork` is denied. Each invocation also
+  owns a fresh process group that is terminated at the end of the bounded turn.
 - A DEGS preflight `PASS`, an agent report of `NONE_REPORTED`, a staged
   candidate, and human acceptance remain different states.
 - Observability is part of the first implementation rather than a later log

@@ -58,24 +58,27 @@ objective, current stage, permitted operations, relative paths, check IDs,
 candidate hash, and prior controller-mediated observations. It does not contain
 an absolute source path.
 
-On macOS, process invocations run through Seatbelt with bounded time and output.
+On macOS, Adapter, check, and DEGS invocations run through Seatbelt with
+bounded time and output. Their profiles allow `process-exec` but do not allow
+`process-fork`: version one is deliberately single-process, so untrusted code
+cannot create a child that detaches into another process group or session.
 Network access and environment-variable names are explicit in the hash-bound
 Adapter configuration. Original Adapter files are verified, copied into a
 temporary execution directory, and invoked from those copies. Reads beneath
 `/Users`, `/Volumes`, the source, the staging root, and the DEGS checkout are
 denied; the controller mediates project reads. The process can still read
 runtime material elsewhere on the host, so this is not a host-wide
-confidentiality proof or a substitute for a dedicated VM.
-After each turn, DobeWorks terminates the Adapter's complete process group so a
-forked descendant cannot outlive the bounded invocation.
+confidentiality proof or a substitute for a dedicated VM. After each turn,
+DobeWorks also terminates the invocation's process group as defense in depth.
 
-DEGS commands run under isolated Python flags with a fixed `PATH` and `LANG`;
-ambient environment variables are not inherited. Their exact source bytes are
-verified before execution. The CLI caller selects `--degs-root`, so that path
-is an executable trust input: a matching hash establishes identity, not
-trustworthiness. Likewise, `dispatch_authority` records the supplied authority
-basis but is not a digital signature. Invoking the command with those inputs is
-the external authorization boundary in version one.
+DEGS commands use the same no-fork process boundary, isolated Python flags,
+and a fixed `PATH` and `LANG`; ambient environment variables are not inherited.
+Their exact source bytes are verified before execution. The CLI caller selects
+`--degs-root`, so that path is an executable trust input: a matching hash
+establishes identity, not trustworthiness. Likewise, `dispatch_authority`
+records the supplied authority basis but is not a digital signature. Invoking
+the command with those inputs is the external authorization boundary in
+version one.
 
 ## Operations
 
@@ -85,7 +88,7 @@ the external authorization boundary in version one.
 - `run_check`: one path-safe, envelope-listed command under a no-network macOS
   sandbox. The command receives only a fixed `PATH` and `LANG`, can read its
   candidate but not `/Users` or `/Volumes`, may not mutate the candidate, and
-  cannot leave a descendant process running after the check.
+  cannot fork a descendant process.
 - `finish_stage`: returns the agent's stage summary. Review completion also
   returns reported concerns and dismissed concerns.
 
@@ -155,13 +158,15 @@ The suite exercises success, direct-source and ambient-home read denial,
 identity substitution, unapproved operations, stage jumps, self-promotion,
 read-only mutation, failed checks, preserved concerns, malformed and non-finite
 JSON, diagnostic-bearing successful subprocesses, redacted invalid proposals,
-the actual DEGS review adapter, and malformed handoff streams. It runs no paid
-model call.
+fork-and-session escape attempts in Adapter, check, and DEGS processes, the
+actual DEGS review adapter, and malformed handoff streams. It runs no paid model
+call.
 
 ## Current limits
 
-- The process sandbox and command-check sandbox require macOS
-  `/usr/bin/sandbox-exec`.
+- All live-worker subprocess isolation requires macOS `/usr/bin/sandbox-exec`.
+- Adapter, check, and DEGS programs that require child processes are outside
+  the version-one single-process contract.
 - Version one supports exact text replacement, not arbitrary patches.
 - The controller detects source or candidate identity drift around copying, but
   it does not claim an operating-system snapshot against a change-and-revert

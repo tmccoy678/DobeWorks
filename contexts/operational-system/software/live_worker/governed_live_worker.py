@@ -539,13 +539,17 @@ def _wait_process_group(
 
 
 def _run_json_process(argv: list[str], cwd: Path, timeout: int, maximum_output: int, label: str) -> dict[str, Any]:
+    sandbox = Path("/usr/bin/sandbox-exec")
+    if not sandbox.is_file():
+        raise LiveWorkerError("BLOCKED_PLATFORM", "macOS sandbox-exec is required for DEGS")
+    command = [str(sandbox), "-p", _degs_sandbox_profile(), "--", *argv]
     with tempfile.TemporaryDirectory(prefix="dobeworks-degs-") as temporary:
         root = Path(temporary)
         stdout_path, stderr_path = root / "stdout", root / "stderr"
         try:
             with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
                 process = subprocess.Popen(
-                    argv,
+                    command,
                     cwd=cwd,
                     stdin=subprocess.DEVNULL,
                     stdout=stdout,
@@ -772,7 +776,7 @@ def _sandbox_profile(output_root: Path, candidate: Path) -> str:
     return (
         '(version 1)\n'
         '(deny default)\n'
-        '(allow process*)\n'
+        '(allow process-exec)\n'
         '(allow file-read*)\n'
         f'(deny file-read* {protected})\n'
         f'(allow file-read* (subpath "{candidate_path}"))\n'
@@ -795,11 +799,22 @@ def _adapter_sandbox_profile(
     return (
         '(version 1)\n'
         '(deny default)\n'
-        '(allow process*)\n'
+        '(allow process-exec)\n'
         '(allow file-read*)\n'
         f'(deny file-read* {denied})\n'
         f'(allow file-write* (subpath "{_seatbelt_quote(output_root)}"))\n'
         f'{network_rule}\n'
+        '(allow sysctl-read)\n'
+    )
+
+
+def _degs_sandbox_profile() -> str:
+    return (
+        '(version 1)\n'
+        '(deny default)\n'
+        '(allow process-exec)\n'
+        '(allow file-read*)\n'
+        '(deny network*)\n'
         '(allow sysctl-read)\n'
     )
 
