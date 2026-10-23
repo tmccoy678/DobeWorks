@@ -17,6 +17,7 @@ The Operational System is the bounded DobeWorks context for hardware, software, 
 - [Phase 3 architecture and disposition handoff](docs/program/v1/architecture/phase-3/handoff.md)
 - [Phase 4 software-core handoff](docs/program/v1/architecture/phase-4/handoff.md)
 - [Phase 4 Worker and Observer software](software/phase4/README.md)
+- [Experimental governed live worker and handoff stream](software/live_worker/README.md)
 - [Program provenance](docs/program/v1/provenance.md)
 - [DobeWorks context map](../../CONTEXT-MAP.md)
 - [ADR 0013](../../docs/adr/0013-distinct-operational-system-context.md)
