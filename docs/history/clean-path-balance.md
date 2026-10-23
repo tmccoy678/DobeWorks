@@ -14,7 +14,7 @@ The screenshot establishes what the conversation displayed at that moment. Taylo
 
 [![The Taylor AI Workbench menu displays C Clean Path Codex alongside the existing Codex route.](../figures/history/2026-10-22-workbench-clean-path.png)](../figures/history/2026-10-22-workbench-clean-path.png)
 
-This window-only capture shows the live Taylor AI Workbench on October 22, 2026. The `[C] Clean Path Codex` entry exists beside the original `[1] Codex` route. It demonstrates the external routing choice that restored practical working room. It does not add a clean lane to DobeWorks or DEGS.
+This window-only capture was made on October 22, 2026, by opening the currently installed Taylor AI Workbench solely to document its menu. The `[C] Clean Path Codex` entry exists beside the original `[1] Codex` route. Taylor reports that the Workbench had last been used much earlier, so the capture date is not evidence of use on or near October 22. The image demonstrates the external routing choice that restored practical working room. It does not add a clean lane to DobeWorks or DEGS.
 
 The design lesson is balance. DobeWorks can remain an umbrella over AI while applying governance in proportion to the work. DEGS must still report its decisions truthfully: once a Tier 2 record says human approval is required, only exact `APPROVED` status may satisfy that control.
 
@@ -23,4 +23,4 @@ The design lesson is balance. DobeWorks can remain an umbrella over AI while app
 | Repository file | Capture | Source and handling | SHA-256 |
 |---|---|---|---|
 | `docs/figures/history/2026-09-08-governance-overhead.png` | 2026-09-08 17:53:20 CDT | Byte-for-byte copy of the pre-existing screenshot `Screenshot 2026-09-08 at 5.53.18 PM.png`; no recreation or image editing. | `ec9018d0c16b18c3c6f3caf8c1f68375f62ad686dd34398958a8504496b11f00` |
-| `docs/figures/history/2026-10-22-workbench-clean-path.png` | 2026-10-22 20:06:35 CDT | Fresh window-only capture of `/Users/taylor/AI-Workbench/Taylor AI Workbench.command`; no compositing or textual alteration. | `b3ba4d64ebdba41ab5b3a721e971937f5b283b1a6bc01b0c380cd91f2f5b7b2b` |
+| `docs/figures/history/2026-10-22-workbench-clean-path.png` | 2026-10-22 20:06:35 CDT | Window-only capture made after opening `/Users/taylor/AI-Workbench/Taylor AI Workbench.command` solely for documentation; no compositing or textual alteration. | `b3ba4d64ebdba41ab5b3a721e971937f5b283b1a6bc01b0c380cd91f2f5b7b2b` |

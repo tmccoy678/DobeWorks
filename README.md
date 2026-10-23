@@ -44,11 +44,11 @@ For a time, I used DobeWorks and DEGS in front of every message entering my regu
 
 ### Historical screenshots
 
-| September 8: recognizing the governance burden | October 22: the external Workbench route that resulted |
+| September 8: recognizing the governance burden | October 22: documenting the installed external Workbench menu |
 |---|---|
 | [![A preserved terminal conversation says routine trash handling had begun to feel like a launch sequence.](docs/figures/history/2026-09-08-governance-overhead.png)](docs/figures/history/2026-09-08-governance-overhead.png) | [![The Taylor AI Workbench menu displays C Clean Path Codex alongside the existing Codex route.](docs/figures/history/2026-10-22-workbench-clean-path.png)](docs/figures/history/2026-10-22-workbench-clean-path.png) |
 
-The September image is a surviving contemporaneous screenshot from the discussion that led to the external Clean Path. The October image is a fresh window-only capture of the real Workbench launcher. See [Governance balance and external Clean Path history](docs/history/clean-path-balance.md) for provenance and interpretation.
+The September image is a surviving contemporaneous screenshot from the discussion that led to the external Clean Path. The October image documents the currently installed Workbench launcher after it was opened solely for this record; its capture date is not a usage date. See [Governance balance and external Clean Path history](docs/history/clean-path-balance.md) for provenance and interpretation.
 
 DobeWorks and DEGS are my personal engineering system for methodological systems, software, research infrastructure, and special projects.
 
