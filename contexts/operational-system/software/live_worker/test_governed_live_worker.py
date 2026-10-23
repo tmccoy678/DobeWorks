@@ -12,10 +12,14 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
 BASE = Path(__file__).resolve().parent
+sys.path.insert(0, str(BASE))
+import governed_live_worker as worker  # noqa: E402
+
 CLI = BASE / "governed_live_worker.py"
 NOW = "2026-10-23T12:00:00Z"
 GATE_DOUBLE = (
@@ -569,6 +573,38 @@ class GovernedLiveWorkerCliTests(unittest.TestCase):
             "REJECTED_INPUT_LIMIT",
         )
         self.assertFalse((self.staging / "job-inspect-001").exists())
+
+    def test_source_tree_scan_does_not_use_unbounded_rglob(self) -> None:
+        with mock.patch.object(
+            Path,
+            "rglob",
+            side_effect=AssertionError("source traversal must be bounded while enumerating"),
+        ):
+            files = worker._tree_files(self.source)
+        self.assertEqual([relative.as_posix() for relative, _ in files], ["README.txt"])
+
+    def test_source_tree_file_count_bound_is_enforced(self) -> None:
+        (self.source / "second.txt").write_text("second\n", encoding="utf-8")
+        with mock.patch.object(worker, "MAX_TREE_FILES", 1):
+            with self.assertRaises(worker.LiveWorkerError) as raised:
+                worker._tree_files(self.source)
+        self.assertEqual(raised.exception.state, "REJECTED_INPUT_LIMIT")
+        self.assertIn("file-count", raised.exception.message)
+
+    def test_source_tree_aggregate_byte_bound_is_enforced(self) -> None:
+        with mock.patch.object(worker, "MAX_TREE_BYTES", 1):
+            with self.assertRaises(worker.LiveWorkerError) as raised:
+                worker._tree_files(self.source)
+        self.assertEqual(raised.exception.state, "REJECTED_INPUT_LIMIT")
+        self.assertIn("byte bound", raised.exception.message)
+
+    def test_source_tree_entry_count_bound_includes_directories(self) -> None:
+        (self.source / "empty-directory").mkdir()
+        with mock.patch.object(worker, "MAX_TREE_ENTRIES", 1):
+            with self.assertRaises(worker.LiveWorkerError) as raised:
+                worker._tree_files(self.source)
+        self.assertEqual(raised.exception.state, "REJECTED_INPUT_LIMIT")
+        self.assertIn("entry-count", raised.exception.message)
 
     def test_deep_control_json_is_rejected_without_traceback(self) -> None:
         depth = 600

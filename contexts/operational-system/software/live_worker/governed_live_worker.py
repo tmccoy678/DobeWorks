@@ -31,6 +31,7 @@ MAX_JSON_DEPTH = 64
 MAX_JSON_NODES = 50_000
 MAX_JSON_NUMBER_DIGITS = 4_300
 MAX_TREE_FILES = 10_000
+MAX_TREE_ENTRIES = 20_000
 MAX_TREE_BYTES = 536_870_912
 MAX_IDENTITY_FILE_BYTES = 67_108_864
 FIXED_STAGES = ("inspect", "execute_check", "review")
@@ -151,24 +152,59 @@ def _tree_files(root: Path) -> list[tuple[Path, Path]]:
     if root.is_symlink() or not root.is_dir():
         raise LiveWorkerError("REJECTED_PATH", f"not a regular source directory: {root}")
     files: list[tuple[Path, Path]] = []
-    for path in sorted(root.rglob("*")):
-        relative = path.relative_to(root)
-        if ".git" in relative.parts:
-            continue
-        if path.is_symlink():
-            raise LiveWorkerError("REJECTED_PATH", f"symlink is prohibited: {relative}")
-        if path.is_file():
-            files.append((relative, path))
-        elif not path.is_dir():
-            raise LiveWorkerError("REJECTED_PATH", f"unsupported source entry: {relative}")
-    if len(files) > MAX_TREE_FILES:
-        raise LiveWorkerError("REJECTED_INPUT_LIMIT", "source tree exceeds the file-count bound")
+    pending = [Path()]
+    entry_count = 0
+    total_bytes = 0
     try:
-        total_bytes = sum(path.stat().st_size for _, path in files)
+        while pending:
+            directory_relative = pending.pop()
+            directory = root / directory_relative
+            if directory.is_symlink() or not directory.is_dir():
+                raise LiveWorkerError(
+                    "REJECTED_PATH",
+                    f"source directory changed during inspection: {directory_relative}",
+                )
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    entry_count += 1
+                    if entry_count > MAX_TREE_ENTRIES:
+                        raise LiveWorkerError(
+                            "REJECTED_INPUT_LIMIT",
+                            "source tree exceeds the entry-count bound",
+                        )
+                    relative = directory_relative / entry.name
+                    if ".git" in relative.parts:
+                        continue
+                    if entry.is_symlink():
+                        raise LiveWorkerError(
+                            "REJECTED_PATH", f"symlink is prohibited: {relative}"
+                        )
+                    if entry.is_file(follow_symlinks=False):
+                        if len(files) >= MAX_TREE_FILES:
+                            raise LiveWorkerError(
+                                "REJECTED_INPUT_LIMIT",
+                                "source tree exceeds the file-count bound",
+                            )
+                        total_bytes += entry.stat(follow_symlinks=False).st_size
+                        if total_bytes > MAX_TREE_BYTES:
+                            raise LiveWorkerError(
+                                "REJECTED_INPUT_LIMIT",
+                                "source tree exceeds the byte bound",
+                            )
+                        files.append((relative, Path(entry.path)))
+                    elif entry.is_dir(follow_symlinks=False):
+                        pending.append(relative)
+                    else:
+                        raise LiveWorkerError(
+                            "REJECTED_PATH", f"unsupported source entry: {relative}"
+                        )
+    except LiveWorkerError:
+        raise
     except OSError as error:
-        raise LiveWorkerError("REJECTED_PATH", "source tree changed during inspection") from error
-    if total_bytes > MAX_TREE_BYTES:
-        raise LiveWorkerError("REJECTED_INPUT_LIMIT", "source tree exceeds the byte bound")
+        raise LiveWorkerError(
+            "REJECTED_PATH", "source tree changed during inspection"
+        ) from error
+    files.sort(key=lambda item: item[0])
     return files
 
 

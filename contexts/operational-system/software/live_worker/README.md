@@ -91,9 +91,9 @@ the external authorization boundary in version one.
 
 There is no general shell operation. Every stage has a maximum action count,
 and every process and check has an explicit timeout and output cap.
-Version one also caps a source tree at 10,000 files and 512 MiB, with no single
-identity-hashed file larger than 64 MiB; file hashes are streamed in one-MiB
-blocks.
+Version one also caps a source tree during enumeration at 20,000 total entries,
+10,000 files, and 512 MiB, with no single identity-hashed file larger than
+64 MiB; file hashes are streamed in one-MiB blocks.
 
 ## Watching the handoffs
 
