@@ -42,6 +42,14 @@ I am aware that it is impossible to eliminate errors. It follows then that DobeW
 
 For a time, I used DobeWorks and DEGS in front of every message entering my regular Codex terminal. As I made the governance more exacting, ordinary work became buried under gate preparation. I created a separate external clean Workbench lane to regain balance. That history explains why a Tier 2 record with required human approval marked `REJECTED` was once allowed to return `PASS`, but it was not a truthful gate result and has been corrected in DEGS. A proper Doberman is resolute, quiet, and poised in the house; it does not need to splash in a river to prove that it is moving. DobeWorks should remain an umbrella over AI while applying governance in proportion to the work.
 
+### Historical screenshots
+
+| September 8: recognizing the governance burden | October 22: the external Workbench route that resulted |
+|---|---|
+| [![A preserved terminal conversation says routine trash handling had begun to feel like a launch sequence.](docs/figures/history/2026-09-08-governance-overhead.png)](docs/figures/history/2026-09-08-governance-overhead.png) | [![The Taylor AI Workbench menu displays C Clean Path Codex alongside the existing Codex route.](docs/figures/history/2026-10-22-workbench-clean-path.png)](docs/figures/history/2026-10-22-workbench-clean-path.png) |
+
+The September image is a surviving contemporaneous screenshot from the discussion that led to the external Clean Path. The October image is a fresh window-only capture of the real Workbench launcher. See [Governance balance and external Clean Path history](docs/history/clean-path-balance.md) for provenance and interpretation.
+
 DobeWorks and DEGS are my personal engineering system for methodological systems, software, research infrastructure, and special projects.
 
 If you would like to discuss DobeWorks and/or DEGS privately, please email me at: tmccoy678@gmail.com.
